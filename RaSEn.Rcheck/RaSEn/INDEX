@@ -1,0 +1,19 @@
+RaModel                 Generate data (x, y) from various models in two
+                        papers.
+RaPlot                  Visualize the feature ranking results of a
+                        fitted RaSE object.
+RaRank                  Rank the features by selected percentages
+                        provided by the output from 'RaScreen'.
+RaScreen                Variable screening via RaSE.
+Rase                    Construct the random subspace ensemble
+                        classifier.
+colon                   Colon data set.
+predict.RaSE            Predict the outcome of new observations based
+                        on the estimated RaSE classifier (Tian, Y. and
+                        Feng, Y., 2021).
+predict.super_RaSE      Predict the outcome of new observations based
+                        on the estimated super RaSE classifier (Zhu, J.
+                        and Feng, Y., 2021).
+print.RaSE              Print a fitted RaSE object.
+print.super_RaSE        Print a fitted super_RaSE object.
+rat                     Affymetrix rat genome 230 2.0 array data set.

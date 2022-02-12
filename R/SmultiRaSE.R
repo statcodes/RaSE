@@ -1,6 +1,6 @@
-#' Construct the random subspace ensemble classifier.
+#' Construct the super multi-label random subspace ensemble classifier.
 #'
-#' \code{RaSE} is a general ensemble classification framework to solve the sparse classification problem. In RaSE algorithm, for each of the B1 weak learners, B2 random subspaces are generated and the optimal one is chosen to train the model on the basis of some criterion.
+#' \code{SmRaSE} is a general ensemble classification framework, adapted from RaSE algorithm, to solve the sparse multi class classification problem. Like RaSE algorithm, for each of the B1 weak learners, B2 random subspaces are generated and the optimal one is chosen to train the model on the basis of some criterion.
 #' @export
 #' @importFrom MASS lda
 #' @importFrom MASS qda
@@ -54,7 +54,64 @@
 #' @importFrom glmnet predict.glmnet
 #' @importFrom ModelMetrics auc
 #' @importFrom lava Expand
-
+#'
+#' @param xtrain n * p observation matrix. n observations, p features.
+#' @param ytrain n observations with k classes.
+#' @param B1 the number of weak learners. Default = 200.
+#' @param B2 the number of subspace candidates generated for each weak learner. Default = 500.
+#' @param D_max the maximal subspace size when generating random subspaces. Default = NULL, which is \eqn{floor(min(\sqrt n, p))}. For classical RaSE with a single classifier type, D_max is a positive integer. For super RaSE with multiple classifier types, D_max is a vector indicating different maximum D values used for each base classifier type (the corresponding classifier types should be noted in the names of the vector).
+#' @seealso \code{\link{predict.SmultiRaSE}}.
+#' @examples
+#' set.seed(0, kind = "L'Ecuyer-CMRG")
+#' train.data <- RaModel("multi_classification", model.no = 1, n = 100,
+#' p = 50, p0 = rep(1/4,4))
+#' test.data <- RaModel("multi_classification", model.no = 1, n = 100,
+#' p = 50, p0 = rep(1/4,4))
+#' xtrain <- train.data$x
+#' colnames(xtrain) <- paste0("V",1:dim(xtrain)[2])
+#' ytrain <- train.data$y
+#' xtest <- test.data$x
+#' colnames(xtest) <- paste0("V",1:dim(xtest)[2])
+#' ytest <- test.data$y
+#'
+#' # test mRaSE classifier with LDA base classifier
+#' fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0,
+#' base = 'lda', cores = 1)
+#' mean(predict(fit, xtest) != ytest)
+#'
+#' \dontrun{
+#' # test mRaSE classifier with LDA base classifier and 1 iteration round
+#' fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 1,
+#' base = 'lda', cores = 6)
+#' mean(predict(fit, xtest) != ytest)
+#'
+#' # test mRaSE classifier with KNN base classifier
+#' fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0,
+#' base = 'knn', cores = 6)
+#' mean(predict(fit, xtest) != ytest)
+#'
+#' # test mRaSE classifier with logistic regression base classifier
+#' fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0,
+#' base = 'logistic', cores = 6)
+#' mean(predict(fit, xtest) != ytest)
+#'
+#' # test mRaSE classifier with tree base classifier
+#' fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0,
+#' base = 'svm', cores = 6)
+#' mean(predict(fit, xtest) != ytest)
+#'
+#' # test mRaSE classifier with tree base classifier
+#' fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0,
+#' base = 'tree', cores = 6)
+#' mean(predict(fit, xtest) != ytest)
+#'
+#' # fit a super RaSE classifier by sampling base learner from kNN, LDA and logistic
+#' # regression in equal probability
+#' fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50,
+#' base = c("knn", "lda", "logistic"), iteration = 1, cores = 6)
+#' mean(predict(fit, xtest) != ytest)
+#'
+#' }
 SmultiRase <- function(xtrain, ytrain,
                        xval = NULL, yval = NULL,
                        B1 = 50, B2 = 100,

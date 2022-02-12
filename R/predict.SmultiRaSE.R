@@ -1,4 +1,25 @@
+#' Predict the outcome of new observations based on the estimated super mRaSE classifier (Bi, F., Zhu, J. and Feng, Y., 2022).
+#'
 #' @export
+#' @examples
+#' set.seed(0, kind = "L'Ecuyer-CMRG")
+#' train.data <- RaModel("multi_classification", model.no = 1, n = 100,
+#' p = 50, p0 = rep(1/4,4))
+#' test.data <- RaModel("multi_classification", model.no = 1, n = 100,
+#' p = 50, p0 = rep(1/4,4))
+#' xtrain <- train.data$x
+#' colnames(xtrain) <- paste0("V",1:dim(xtrain)[2])
+#' ytrain <- train.data$y
+#' xtest <- test.data$x
+#' colnames(xtest) <- paste0("V",1:dim(xtest)[2])
+#' ytest <- test.data$y
+#'
+#' fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0,
+#'base = 'lda', cores = 1)
+#' ypred <- predict(fit, xtest)
+#' mean(ypred != ytest)
+
+
 predict.SmultiRaSE <- function(object, newx, type = c("vote", "prob", "raw-vote", "raw-prob"), ...) {
   type <- match.arg(type)
 

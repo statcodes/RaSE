@@ -21,17 +21,9 @@
 #' ytrain <- train.data$y
 #'
 #' \dontrun{
-#' # multi-label
-#' train.data <- RaModel("multi_classification", model.no = 1, n = 100,
-#' p = 50, p0 = rep(1/4,4))
-#' xtrain <- train.data$x
-#' ytrain <- train.data$y
-#'
-#' # linear
 #' train.data <- RaModel("screening", 2, n = 100, p = 50)
 #' xtrain <- train.data$x
 #' ytrain <- train.data$y
-#'
 #' }
 #' @references
 #' Tian, Y. and Feng, Y., 2021(a). RaSE: A variable screening framework via random subspace ensembles. Journal of the American Statistical Association, (just-accepted), pp.1-30.
@@ -39,13 +31,6 @@
 #' Tian, Y. and Feng, Y., 2021(b). RaSE: Random subspace ensemble classification. Journal of Machine Learning Research, 22(45), pp.1-93.
 
 RaModel <- function(model.type, model.no, n, p, p0 = 1/2, sparse = TRUE) {
-
-    # binary or multi
-    if(length(p0) == 4) {flag = FALSE}
-    else flag = TRUE
-
-    if(flag){
-
     if (model.type == "classification") {
         if (model.no == 1) {
             N <- as.vector(rmultinom(1, n, c(p0, 1 - p0)))
@@ -248,120 +233,8 @@ RaModel <- function(model.type, model.no, n, p, p0 = 1/2, sparse = TRUE) {
 
 
     }
-    }
-
-    if(!flag){
-
-        if (model.type == "multi_classification"){
 
 
-            if (model.no == 1) {#LDA
-                N <- as.vector(rmultinom(1, n, p0))
-                Y <- c(rep(0, N[1]), rep(1, N[2]),rep(2,N[3]),rep(3,N[4]))
-
-                Sigma <- outer(1:p, 1:p, function(i, j) {
-                    0.5^(abs(i - j))
-                })
-                R <- chol(Sigma)
-
-                mu0 <- rep(0, p)
-                if (sparse) {
-                    mu1 <- 0.6 * Sigma %*% c(3, 1, 0, 0, 2, rep(0, p - 5))
-                    mu2 <- 0.6 * Sigma %*% c(-3, 2, 0, 0, -4 , rep(0,p - 5))
-                    mu3 <- 0.6 * Sigma %*% c(6, -1, 0, 0, -2, rep(0,p - 5))
-                } else {
-                    mu1 <- 0.6 * Sigma %*% c(3, 1, 0, 0, 2, rep(0, p - 50))
-                    mu2 <- 0.6 * Sigma %*% c(-3, 2, 0, 0, -4 , rep(0,p - 50))
-                    mu3 <- 0.6 * Sigma %*% c(6, -1, 0, 0, -2, rep(0,p - 50))
-                }
-
-                X <- tcrossprod(matrix(rnorm(n*p), nrow = n, ncol = p), t(R)) + rbind(matrix(rep(mu0, N[1]), nrow = N[1], byrow = T),
-                                                                                      matrix(rep(mu1, N[2]), nrow = N[2], byrow = T),
-                                                                                      matrix(rep(mu2, N[3]), nrow = N[3], byrow = T),
-                                                                                      matrix(rep(mu3, N[4]), nrow = N[4], byrow = T))
-            }
-            if (model.no == 2) { # QDA
-
-                    Y1 <- as.vector(rmultinom(1, n, p0))
-                    Y <- c(rep(0,Y1[1]),rep(1,Y1[2]),rep(2,Y1[3]),rep(3,Y1[4]))
-
-                    Sigma01 <- diag(1, p) + outer(1:p, 1:p, function(i, j) {
-                        0.3 * I(abs(i - j) == 1)
-                    })
-
-                    Sigma02 <- matrix(0, nrow = p, ncol = p)
-                    Sigma02[10, 10] <- 0.4758
-                    Sigma02[10, 30] <- 0.0616
-                    Sigma02[30, 10] <- 0.0616
-                    Sigma02[10, 50] <- 0.2037
-                    Sigma02[50, 10] <- 0.2037
-                    Sigma02[30, 30] <- 0.5482
-                    Sigma02[30, 50] <- 0.0286
-                    Sigma02[50, 30] <- 0.0286
-                    Sigma02[50, 50] <- 0.4614
-
-                    Sigma3 <- solve(Sigma01 + Sigma02 * 4.5)
-                    Sigma2 <- solve(Sigma01 + Sigma02 * 3)
-                    Sigma1 <- solve(Sigma01 + Sigma02 * 1.5)
-                    Sigma0 <- solve(Sigma01)
-
-                    mu3 <- 5*Sigma3 %*% c(0.9,0.4,rep(0,p - 2))
-                    mu2 <- 5*Sigma2 %*% c(0.2,0.8,rep(0,p - 2))
-                    mu1 <- 5*Sigma1 %*% c(0.5,0.1,rep(0,p - 2))
-                    mu0 <- rep(0,p)
-
-                    # R0 <- chol(Sigma0)
-                    # R1 <- chol(Sigma1)
-                    # tcrossprod(matrix(rnorm(n*p), nrow = n, ncol = p), t(R))
-                    X3 <- mvrnorm(Y1[4], mu3, Sigma3)
-                    X2 <- mvrnorm(Y1[3], mu2, Sigma2)
-                    X1 <- mvrnorm(Y1[2], mu1, Sigma1)
-                    X0 <- mvrnorm(Y1[1], mu0, Sigma0)
-
-                    X <- rbind(X0,X1,X2,X3)
-            }
-            if (model.no == 3) {# knn
-                X0 <- mvrnorm(n = 20, mu = rep(0, p), Sigma = diag(p))
-                Y0 <- rep(c(0, 1, 2, 3), each = 5)
-                if (sparse) {
-                    Ds <- sapply(1:n, function(o) {
-                        i0 <- sample(20, 1)
-                        c(mvrnorm(n = 1, mu = c(X0[i0, 1:5], rep(0, p - 5)), Sigma =  0.5^2*diag(p)), Y0[i0])
-                    })
-                } else {
-                    Ds <- sapply(1:n, function(o) {
-                        i0 <- sample(20, 1)
-                        c(mvrnorm(n = 1, mu = c(X0[i0, 1:30], rep(0, p - 30)), Sigma =  2*diag(p)), Y0[i0])
-                    })
-                }
-
-                X <- t(Ds[-nrow(Ds), ])
-                Y <- Ds[nrow(Ds), ]
-            }
-            if (model.no == 4) { #multi logistic
-
-                mul <- 10
-                beta1 <- c(mul,1,1,rep(0,p-3))
-                beta2 <- c(1,mul,1,rep(0,p-3))
-                beta3 <- c(1,1,mul,rep(0,p-3))
-
-                X <- mvrnorm(n,rep(0,p),0.5*diag(p))
-
-                prob1 <- exp(X%*%beta1)
-                prob2 <- exp(X%*%beta2)
-                prob3 <- exp(X%*%beta3)
-
-                prob <- sapply(1:n,function(i){
-                    c(prob1[i],prob2[i],prob3[i],1)/(1+prob1[i]+prob2[i]+prob3[i])
-                })
-                Y <- apply(prob, 2, function(prob){sample(1:4, 1, prob = prob)})
-                #Y <- apply(prob,2,which.max)
-        }
-
-}
-
-}
     return(list(x = X, y = Y))
 
-    }
-
+}

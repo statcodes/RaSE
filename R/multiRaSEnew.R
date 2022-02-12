@@ -141,7 +141,6 @@ multiRasenew <- function(xtrain, ytrain,
   }
 
   # # #
-  library(doParallel)
 
   registerDoParallel(cores)
 
@@ -195,7 +194,6 @@ multiRasenew <- function(xtrain, ytrain,
           while (flag) {
             snew <- S[!is.na(S[, j]), j]
             if (length(snew) > 2) {
-              library(caret)
               ind0 <- findLinearCombos(Sigma.mle[snew, snew, drop = F])$remove
               if (!is.null(ind0)) {
                 snew <- snew[-ind0]
@@ -331,7 +329,6 @@ multiRasenew <- function(xtrain, ytrain,
           while (flag) {
             snew <- S[!is.na(S[, j]), j]
             if (length(snew) > 2) {
-              library(caret)
               ind0 <- lapply(1:nmulti,function(i){
                 findLinearCombos(Sigma.mle[[i]][snew, snew, drop = F])$remove})
               ind0 <- unique(unlist(ind0))

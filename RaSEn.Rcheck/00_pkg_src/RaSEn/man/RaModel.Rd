@@ -37,17 +37,9 @@ xtrain <- train.data$x
 ytrain <- train.data$y
 
 \dontrun{
-# multi-label
-train.data <- RaModel("multi_classification", model.no = 1, n = 100,
-p = 50, p0 = rep(1/4,4))
-xtrain <- train.data$x
-ytrain <- train.data$y
-
-# linear
 train.data <- RaModel("screening", 2, n = 100, p = 50)
 xtrain <- train.data$x
 ytrain <- train.data$y
-
 }
 }
 \references{
