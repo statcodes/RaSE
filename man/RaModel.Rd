@@ -56,5 +56,5 @@ Tian, Y. and Feng, Y., 2021(a). RaSE: A variable screening framework via random 
 Tian, Y. and Feng, Y., 2021(b). RaSE: Random subspace ensemble classification. Journal of Machine Learning Research, 22(45), pp.1-93.
 }
 \seealso{
-\code{\link{Rase}}, \code{\link{RaScreen}}.
+\code{\link{RaSE}}, \code{\link{RaScreen}}.
 }

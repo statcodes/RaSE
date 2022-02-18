@@ -6,7 +6,7 @@
 #' @param x fitted \code{'RaSE'} model object.
 #' @param ... additional arguments.
 #' @return No value is returned.
-#' @seealso \code{\link{Rase}}.
+#' @seealso \code{\link{RaSE}}.
 #' @examples
 #' set.seed(0, kind = "L'Ecuyer-CMRG")
 #' train.data <- RaModel("classification", 1, n = 100, p = 50)
@@ -14,7 +14,7 @@
 #' ytrain <- train.data$y
 #'
 #' # test RaSE classifier with LDA base classifier
-#' fit <- Rase(xtrain, ytrain, B1 = 50, B2 = 50, iteration = 0, cutoff = TRUE,
+#' fit <- RaSE(xtrain, ytrain, B1 = 50, B2 = 50, iteration = 0, cutoff = TRUE,
 #' base = 'lda', cores = 2, criterion = 'ric', ranking = TRUE)
 #'
 #' # print the summarized results

@@ -25,12 +25,12 @@ xtrain <- train.data$x
 ytrain <- train.data$y
 
 # test RaSE classifier with LDA base classifier
-fit <- Rase(xtrain, ytrain, B1 = 50, B2 = 50, iteration = 0, cutoff = TRUE,
+fit <- RaSE(xtrain, ytrain, B1 = 50, B2 = 50, iteration = 0, cutoff = TRUE,
 base = 'lda', cores = 2, criterion = 'ric', ranking = TRUE)
 
 # print the summarized results
 print(fit)
 }
 \seealso{
-\code{\link{Rase}}.
+\code{\link{RaSE}}.
 }

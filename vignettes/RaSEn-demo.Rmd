@@ -104,10 +104,10 @@ ggplot(data = data.frame(xtrain, y = factor(ytrain)), mapping = aes(x = X6, y = 
 ```
 It's obvious to see that in dimension 1 and 2 the data from two classes are more linearly seperate than in dimension 6 and 7. Then we call `Rase` function to fit the RaSE classifier with LDA, QDA and logistic regression base classifiers with criterion of minimizing RIC and RaSE classifier with knn base classifier with criterion of minimizing leave-one-out error. To use different types of base classifier, we set `base` as "lda", "qda", "knn" and "logistic", repectively. `B1` is set to be 100 to generate 100 weak learners and `B2` is set to be 100 as well to generate 100 subspace candidates for each weak learner. Without using iterations, we set `iteration` as 0. `criterion` is set to be "ric" for RaSE classifier with LDA, QDA and logistic regression while it is "loo" for RaSE classifier with knn base classifier. To speed up the computation, we apply parallel computing with 2 cores by setting `cores = 2`.
 ```{r, tidy=TRUE, tidy.opts=list(width.cutoff=70)}
-fit.lda <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "lda", cores = 2, criterion = "ric")
-fit.qda <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "qda", cores = 2, criterion = "ric")
-fit.knn <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "knn", cores = 2, criterion = "loo")
-fit.logistic <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "logistic", cores = 2, criterion = "ric")
+fit.lda <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "lda", cores = 2, criterion = "ric")
+fit.qda <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "qda", cores = 2, criterion = "ric")
+fit.knn <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "knn", cores = 2, criterion = "loo")
+fit.logistic <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "logistic", cores = 2, criterion = "ric")
 ```
 We can print the summarized results of RaSE model by calling `print` function. For instance, we print the RaSE model with LDA base classifier:
 ```{r, tidy=TRUE, tidy.opts=list(width.cutoff=70)}
@@ -168,7 +168,7 @@ In RaSE, we consider only a single type of base classifiers (e.g. LDA, QDA, $k$N
 The following example shows how to fit a super RaSE classifier which mixes $k$NN, LDA and logistic regression.
 
 ```{r, tidy=TRUE, tidy.opts=list(width.cutoff=70)}
-fit.super <- Rase(xtrain = xtrain, ytrain = ytrain, B1 = 100, B2 = 50, base = c("knn", "lda", "logistic"), super = list(type = "separate", base.update = T), criterion = "cv", cv = 5, iteration = 0, cores = 2)
+fit.super <- RaSE(xtrain = xtrain, ytrain = ytrain, B1 = 100, B2 = 50, base = c("knn", "lda", "logistic"), super = list(type = "separate", base.update = T), criterion = "cv", cv = 5, iteration = 0, cores = 2)
 ypred <- predict(fit.super, xtest)
 mean(ypred != ytest)
 ```

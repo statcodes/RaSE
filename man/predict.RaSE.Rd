@@ -7,7 +7,7 @@
 \method{predict}{RaSE}(object, newx, type = c("vote", "prob", "raw-vote", "raw-prob"), ...)
 }
 \arguments{
-\item{object}{fitted \code{'RaSE'} object using \code{Rase}.}
+\item{object}{fitted \code{'RaSE'} object using \code{RaSE}.}
 
 \item{newx}{a set of new observations. Each row of \code{newx} is a new observation.}
 
@@ -37,7 +37,7 @@ ytrain <- train.data$y
 xtest <- test.data$x
 ytest <- test.data$y
 
-model.fit <- Rase(xtrain, ytrain, B1 = 100, B2 = 100, iteration = 0, base = 'lda',
+model.fit <- RaSE(xtrain, ytrain, B1 = 100, B2 = 100, iteration = 0, base = 'lda',
 cores = 2, criterion = 'ric', ranking = TRUE)
 ypred <- predict(model.fit, xtest)
 mean(ypred != ytest)
@@ -48,5 +48,5 @@ mean(ypred != ytest)
 Tian, Y. and Feng, Y., 2021. RaSE: Random subspace ensemble classification. Journal of Machine Learning Research, 22(45), pp.1-93.
 }
 \seealso{
-\code{\link{Rase}}.
+\code{\link{RaSE}}.
 }

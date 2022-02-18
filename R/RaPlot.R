@@ -8,7 +8,7 @@
 #' @param ylab the label of y-axis. Default = 'selected percentage'.
 #' @param ... additional arguments.
 #' @return a \code{'ggplot'} object.
-#' @seealso \code{\link{Rase}}.
+#' @seealso \code{\link{RaSE}}.
 #' @references
 #' Tian, Y. and Feng, Y., 2021. RaSE: Random subspace ensemble classification. Journal of Machine Learning Research, 22(45), pp.1-93.
 #'
@@ -19,7 +19,7 @@
 #' ytrain <- train.data$y
 #'
 #' # fit RaSE classifier with QDA base classifier
-#' fit <- Rase(xtrain, ytrain, B1 = 50, B2 = 50, iteration = 1, base = 'qda',
+#' fit <- RaSE(xtrain, ytrain, B1 = 50, B2 = 50, iteration = 1, base = 'qda',
 #' cores = 2, criterion = 'ric')
 #'
 #' # plot the selected percentage of each feature appearing in B1 subspaces

@@ -126,7 +126,7 @@
 #' \item{subspace}{sequence of subspaces correponding to B1 weak learners.}
 #' \item{ranking}{the selected percentage of each feature in B1 subspaces.}
 #' \item{scale}{a list of scaling parameters, including the scaling center and the scale parameter for each feature. Equals to \code{NULL} when the data is not scaled in \code{RaSE} model fitting.}
-#' An object with S3 class \code{'super_RaSE'} if \code{base} includes multiple base classifiers or the sampling probability of multiple classifiers.
+#' An object with S3 class \code{'SRaSE'} if \code{base} includes multiple base classifiers or the sampling probability of multiple classifiers.
 #' \item{marginal}{the marginal probability for each class.}
 #' \item{base}{the list of B1 base classifier types.}
 #' \item{criterion}{the criterion to choose the best subspace for each weak learner.}
@@ -141,7 +141,7 @@
 #' \item{ranking.base}{the selected percentage of each classifier type in the selected B1 learners.}
 #' \item{scale}{a list of scaling parameters, including the scaling center and the scale parameter for each feature. Equals to \code{NULL} when the data is not scaled in \code{RaSE} model fitting.}
 #' @author Ye Tian (maintainer, \email{ye.t@@columbia.edu}) and Yang Feng. The authors thank Yu Cao (Exeter Finance) and his team for many helpful suggestions and discussions.
-#' @seealso \code{\link{predict.RaSE}}, \code{\link{RaModel}}, \code{\link{print.RaSE}}, \code{\link{print.super_RaSE}}, \code{\link{RaPlot}}, \code{\link{RaScreen}}.
+#' @seealso \code{\link{predict.RaSE}}, \code{\link{RaModel}}, \code{\link{print.RaSE}}, \code{\link{print.SRaSE}}, \code{\link{RaPlot}}, \code{\link{RaScreen}}.
 #' @references
 #' Tian, Y. and Feng, Y., 2021(a). RaSE: A variable screening framework via random subspace ensembles. Journal of the American Statistical Association, (just-accepted), pp.1-30.
 #'
@@ -167,58 +167,58 @@
 #' ytest <- test.data$y
 #'
 #' # test RaSE classifier with LDA base classifier
-#' fit <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = 'lda',
+#' fit <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = 'lda',
 #' cores = 2, criterion = 'ric')
 #' mean(predict(fit, xtest) != ytest)
 #'
 #' \dontrun{
 #' # test RaSE classifier with LDA base classifier and 1 iteration round
-#' fit <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 1, base = 'lda',
+#' fit <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 1, base = 'lda',
 #' cores = 2, criterion = 'ric')
 #' mean(predict(fit, xtest) != ytest)
 #'
 #' # test RaSE classifier with QDA base classifier and 1 iteration round
-#' fit <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 1, base = 'qda',
+#' fit <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 1, base = 'qda',
 #' cores = 2, criterion = 'ric')
 #' mean(predict(fit, xtest) != ytest)
 #'
 #' # test RaSE classifier with kNN base classifier
-#' fit <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = 'knn',
+#' fit <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = 'knn',
 #' cores = 2, criterion = 'loo')
 #' mean(predict(fit, xtest) != ytest)
 #'
 #' # test RaSE classifier with logistic regression base classifier
-#' fit <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = 'logistic',
+#' fit <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = 'logistic',
 #' cores = 2, criterion = 'bic')
 #' mean(predict(fit, xtest) != ytest)
 #'
 #' # test RaSE classifier with SVM base classifier
-#' fit <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = 'svm',
+#' fit <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = 'svm',
 #' cores = 2, criterion = 'training')
 #' mean(predict(fit, xtest) != ytest)
 #'
 #' # test RaSE classifier with random forest base classifier
-#' fit <- Rase(xtrain, ytrain, B1 = 20, B2 = 10, iteration = 0, base = 'randomforest',
+#' fit <- RaSE(xtrain, ytrain, B1 = 20, B2 = 10, iteration = 0, base = 'randomforest',
 #' cores = 2, criterion = 'cv', cv = 3)
 #' mean(predict(fit, xtest) != ytest)
 #'
 #' # fit a super RaSE classifier by sampling base learner from kNN, LDA and logistic
 #' # regression in equal probability
-#' fit <- Rase(xtrain = xtrain, ytrain = ytrain, B1 = 100, B2 = 100,
+#' fit <- RaSE(xtrain = xtrain, ytrain = ytrain, B1 = 100, B2 = 100,
 #' base = c("knn", "lda", "logistic"), super = list(type = "separate", base.update = T),
 #' criterion = "cv", cv = 5, iteration = 1, cores = 2)
 #' mean(predict(fit, xtest) != ytest)
 #'
 #' # fit a super RaSE classifier by sampling base learner from random forest, LDA and
 #' # SVM with probability 0.2, 0.5 and 0.3
-#' fit <- Rase(xtrain = xtrain, ytrain = ytrain, B1 = 100, B2 = 100,
+#' fit <- RaSE(xtrain = xtrain, ytrain = ytrain, B1 = 100, B2 = 100,
 #' base = c(randomforest = 0.2, lda = 0.5, svm = 0.3),
 #' super = list(type = "separate", base.update = F),
 #' criterion = "cv", cv = 5, iteration = 0, cores = 2)
 #' mean(predict(fit, xtest) != ytest)
 #' }
 
-Rase <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D = NULL, dist = NULL, base = NULL, super = list(type = c("separate"), base.update = TRUE), criterion = NULL, ranking = TRUE, k = c(3, 5, 7, 9, 11), cores = 1,
+RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D = NULL, dist = NULL, base = NULL, super = list(type = c("separate"), base.update = TRUE), criterion = NULL, ranking = TRUE, k = c(3, 5, 7, 9, 11), cores = 1,
     seed = NULL, iteration = 0, cutoff = TRUE, cv = 5, scale = FALSE, C0 = 0.1, kl.k = NULL, lower.limits = NULL, upper.limits = NULL, weights = NULL, ...) {
 
     if (!is.null(seed)) {
@@ -272,7 +272,7 @@ Rase <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
     }
 
     if (scale == TRUE) {
-        L <- scale_Rase(xtrain)
+        L <- scale_RaSE(xtrain)
         xtrain <- L$data
         scale.center <- L$center
         scale.scale <- L$scale
@@ -783,7 +783,7 @@ Rase <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
         stopImplicitCluster()
         obj <- list(marginal = c(`class 0` = p0, `class 1` = 1 - p0), base = Reduce("c", base.list), criterion = criterion, B1 = B1, B2 = B2, D = D,
                     iteration = iteration, fit.list = fit.list, cutoff = cutoff, subspace = subspace, ranking.feature = rk.feature, ranking.base = rk.base, scale = scale.parameters)
-        class(obj) <- "super_RaSE"
+        class(obj) <- "SRaSE"
     }
 
 

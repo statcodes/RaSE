@@ -64,7 +64,7 @@ remove_ind <- function(x, y){
     return(unique(delete.ind_all))
 
 }
-scale_Rase <- function(x) {
+scale_RaSE <- function(x) {
     scale.center <- rep(0, ncol(x))
     scale.scale <- rep(0, ncol(x))
     const.ind <- sapply(1:ncol(x), function(i) {

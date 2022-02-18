@@ -14,7 +14,7 @@
 #' @note When \code{model.type} = 'classification' and \code{sparse} = TRUE, models 1, 2, 4 require \eqn{p \ge 5} and model 3 requires
 #'  \eqn{p \ge 50}. When \code{model.type} = 'classification' and \code{sparse} = FALSE, models 1 and 4 require \eqn{p \ge 50} and
 #'  \eqn{p \ge 30}, respectively. When \code{model.type} = 'screening', models 1, 4, 5 and 7 require \eqn{p \ge 4}. Models 2 and 8 require \eqn{p \ge 5}. Model 3 requires \eqn{p \ge 22}. Model 5 requires \eqn{p \ge 2}.
-#' @seealso \code{\link{Rase}}, \code{\link{RaScreen}}.
+#' @seealso \code{\link{RaSE}}, \code{\link{RaScreen}}.
 #' @examples
 #' train.data <- RaModel("classification", 1, n = 100, p = 50)
 #' xtrain <- train.data$x

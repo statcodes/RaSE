@@ -169,5 +169,5 @@ Chen, J. and Chen, Z., 2012. Extended BIC for small-n-large-P sparse GLM. Statis
 Schwarz, G., 1978. Estimating the dimension of a model. The annals of statistics, 6(2), pp.461-464.
 }
 \seealso{
-\code{\link{Rase}}, \code{\link{RaRank}}.
+\code{\link{RaSE}}, \code{\link{RaRank}}.
 }

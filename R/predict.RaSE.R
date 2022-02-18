@@ -1,7 +1,7 @@
 #' Predict the outcome of new observations based on the estimated RaSE classifier (Tian, Y. and Feng, Y., 2021).
 #'
 #' @export
-#' @param object fitted \code{'RaSE'} object using \code{Rase}.
+#' @param object fitted \code{'RaSE'} object using \code{RaSE}.
 #' @param newx a set of new observations. Each row of \code{newx} is a new observation.
 #' @param type the type of prediction output. Can be 'vote', 'prob', 'raw-vote' or 'raw-prob'. Default = 'vote'.
 #' \itemize{
@@ -12,7 +12,7 @@
 #' }
 #' @param ... additional arguments.
 #' @return depends on the parameter \code{type}. See the list above.
-#' @seealso \code{\link{Rase}}.
+#' @seealso \code{\link{RaSE}}.
 #' @references
 #' Tian, Y. and Feng, Y., 2021. RaSE: Random subspace ensemble classification. Journal of Machine Learning Research, 22(45), pp.1-93.
 #'
@@ -26,7 +26,7 @@
 #' xtest <- test.data$x
 #' ytest <- test.data$y
 #'
-#' model.fit <- Rase(xtrain, ytrain, B1 = 100, B2 = 100, iteration = 0, base = 'lda',
+#' model.fit <- RaSE(xtrain, ytrain, B1 = 100, B2 = 100, iteration = 0, base = 'lda',
 #' cores = 2, criterion = 'ric', ranking = TRUE)
 #' ypred <- predict(model.fit, xtest)
 #' mean(ypred != ytest)

@@ -1,7 +1,7 @@
-#' Predict the outcome of new observations based on the estimated super RaSE classifier (Zhu, J. and Feng, Y., 2021).
+#' Predict the outcome of new observations based on the estimated Super RaSE classifier (Zhu, J. and Feng, Y., 2021).
 #'
 #' @export
-#' @param object fitted \code{'super_RaSE'} object using \code{Rase}.
+#' @param object fitted \code{'SRaSE'} object using \code{RaSE}.
 #' @param newx a set of new observations. Each row of \code{newx} is a new observation.
 #' @param type the type of prediction output. Can be 'vote', 'prob', 'raw-vote' or 'raw-prob'. Default = 'vote'.
 #' \itemize{
@@ -12,7 +12,7 @@
 #' }
 #' @param ... additional arguments.
 #' @return depends on the parameter \code{type}. See the list above.
-#' @seealso \code{\link{Rase}}.
+#' @seealso \code{\link{RaSE}}.
 #' @references
 #' Zhu, J. and Feng, Y., 2021. Super RaSE: Super Random Subspace Ensemble Classification. https://www.preprints.org/manuscript/202110.0042
 #'
@@ -28,7 +28,7 @@
 #'
 #' # fit a super RaSE classifier by sampling base learner from kNN, LDA and
 #' # logistic regression in equal probability
-#' fit <- Rase(xtrain = xtrain, ytrain = ytrain, B1 = 100, B2 = 100,
+#' fit <- RaSE(xtrain = xtrain, ytrain = ytrain, B1 = 100, B2 = 100,
 #' base = c("knn", "lda", "logistic"), super = list(type = "separate", base.update = T),
 #' criterion = "cv", cv = 5, iteration = 1, cores = 2)
 #' ypred <- predict(fit, xtest)
@@ -36,7 +36,7 @@
 #' }
 #'
 
-predict.super_RaSE <- function(object, newx, type = c("vote", "prob", "raw-vote", "raw-prob"), ...) {
+predict.SRaSE <- function(object, newx, type = c("vote", "prob", "raw-vote", "raw-prob"), ...) {
   type <- match.arg(type)
 
   if (!is.null(object$scale)) {
@@ -93,7 +93,7 @@ predict.super_RaSE <- function(object, newx, type = c("vote", "prob", "raw-vote"
 
     if (object$base[i] == "gamma") {
       rs <- gamma_classifier(t0.mle = object$fit.list[[i]][[1]], t1.mle = object$fit.list[[i]][[2]], p0 = object$fit.list[[i]][[3]],
-                         p1 = object$fit.list[[i]][[4]], newx, object$subspace[[i]])
+                             p1 = object$fit.list[[i]][[4]], newx, object$subspace[[i]])
     }
 
     rs

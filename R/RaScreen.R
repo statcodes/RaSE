@@ -64,7 +64,7 @@
 #' \item{iteration}{the number of iterations.}
 #' \item{selected.perc}{A list of length (\code{iteration}+1) recording the selected percentages of each feature in B1 subspaces. When it is of length 1, the result will be automatically transformed to a vector.}
 #' \item{scale}{a list of scaling parameters, including the scaling center and the scale parameter for each feature. Equals to \code{NULL} when the data is not scaled by \code{RaScreen}.}
-#' @seealso \code{\link{Rase}}, \code{\link{RaRank}}.
+#' @seealso \code{\link{RaSE}}, \code{\link{RaRank}}.
 #' @references
 #' Tian, Y. and Feng, Y., 2021(a). RaSE: A variable screening framework via random subspace ensembles. Journal of the American Statistical Association, (just-accepted), pp.1-30.
 #'
@@ -165,7 +165,7 @@ RaScreen <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = NU
 
 
   if (scale == TRUE) {
-    L <- scale_Rase(xtrain)
+    L <- scale_RaSE(xtrain)
     xtrain <- L$data
     scale.center <- L$center
     scale.scale <- L$scale

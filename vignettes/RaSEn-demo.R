@@ -24,10 +24,10 @@ ggplot(data = data.frame(xtrain, y = factor(ytrain)), mapping = aes(x = X1, y = 
 ggplot(data = data.frame(xtrain, y = factor(ytrain)), mapping = aes(x = X6, y = X7, color = y)) + geom_point()
 
 ## ---- tidy=TRUE, tidy.opts=list(width.cutoff=70)------------------------------
-fit.lda <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "lda", cores = 2, criterion = "ric")
-fit.qda <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "qda", cores = 2, criterion = "ric")
-fit.knn <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "knn", cores = 2, criterion = "loo")
-fit.logistic <- Rase(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "logistic", cores = 2, criterion = "ric")
+fit.lda <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "lda", cores = 2, criterion = "ric")
+fit.qda <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "qda", cores = 2, criterion = "ric")
+fit.knn <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "knn", cores = 2, criterion = "loo")
+fit.logistic <- RaSE(xtrain, ytrain, B1 = 100, B2 = 50, iteration = 0, base = "logistic", cores = 2, criterion = "ric")
 
 ## ---- tidy=TRUE, tidy.opts=list(width.cutoff=70)------------------------------
 print(fit.lda)
@@ -50,7 +50,7 @@ grid.arrange(plot_lda, plot_qda, plot_knn, plot_logistic, ncol=2)
 
 
 ## ---- tidy=TRUE, tidy.opts=list(width.cutoff=70)------------------------------
-fit.super <- Rase(xtrain = xtrain, ytrain = ytrain, B1 = 100, B2 = 50, base = c("knn", "lda", "logistic"), super = list(type = "separate", base.update = T), criterion = "cv", cv = 5, iteration = 0, cores = 2)
+fit.super <- RaSE(xtrain = xtrain, ytrain = ytrain, B1 = 100, B2 = 50, base = c("knn", "lda", "logistic"), super = list(type = "separate", base.update = T), criterion = "cv", cv = 5, iteration = 0, cores = 2)
 ypred <- predict(fit.super, xtest)
 mean(ypred != ytest)
 

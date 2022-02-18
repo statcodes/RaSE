@@ -27,7 +27,7 @@
 #'
 #' Schwarz, G., 1978. Estimating the dimension of a model. The annals of statistics, 6(2), pp.461-464.
 #'
-#' @examples
+#'
 
 
 predict.dnn <- function(fit = dnn_fit, newdata = x_test){

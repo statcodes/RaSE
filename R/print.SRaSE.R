@@ -1,12 +1,12 @@
-#' Print a fitted super_RaSE object.
+#' Print a fitted SRaSE object.
 #'
 #' Similar to the usual print methods, this function summarizes results.
-#' from a fitted \code{'super_RaSE'} object.
+#' from a fitted \code{'SRaSE'} object.
 #' @export
-#' @param x fitted \code{'super_RaSE'} model object.
+#' @param x fitted \code{'SRaSE'} model object.
 #' @param ... additional arguments.
 #' @return No value is returned.
-#' @seealso \code{\link{Rase}}.
+#' @seealso \code{\link{RaSE}}.
 #' @examples
 #' set.seed(0, kind = "L'Ecuyer-CMRG")
 #' train.data <- RaModel("classification", 1, n = 100, p = 50)
@@ -14,13 +14,13 @@
 #' ytrain <- train.data$y
 #'
 #' # test RaSE classifier with LDA base classifier
-#' fit <- Rase(xtrain, ytrain, B1 = 50, B2 = 50, iteration = 0, cutoff = TRUE,
+#' fit <- RaSE(xtrain, ytrain, B1 = 50, B2 = 50, iteration = 0, cutoff = TRUE,
 #' base = 'lda', cores = 2, criterion = 'ric', ranking = TRUE)
 #'
 #' # print the summarized results
 #' print(fit)
 
-print.super_RaSE <- function(x, ...) {
+print.SRaSE <- function(x, ...) {
   cat("Marginal probabilities:", "\n")
   print(x$marginal)
   cat("Count of base classifier types among", x$B1, "classifiers:")
