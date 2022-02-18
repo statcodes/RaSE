@@ -209,7 +209,7 @@
 #' criterion = "cv", cv = 5, iteration = 1, cores = 2)
 #' mean(predict(fit, xtest) != ytest)
 #'
-#' # fit a super RaSE classifier by sampling base learner from random forest, LDA and
+#' # fit a Super RaSE classifier by sampling base learner from random forest, LDA and
 #' # SVM with probability 0.2, 0.5 and 0.3
 #' fit <- RaSE(xtrain = xtrain, ytrain = ytrain, B1 = 100, B2 = 100,
 #' base = c(randomforest = 0.2, lda = 0.5, svm = 0.3),
