@@ -2,6 +2,31 @@
 #'
 #' \code{RaSE} is a general ensemble classification framework to solve the sparse classification problem. In RaSE algorithm, for each of the B1 weak learners, B2 random subspaces are generated and the optimal one is chosen to train the model on the basis of some criterion.
 #' @export
+#' @param xtrain a
+#' @param ytrain a
+#' @param xval a
+#' @param yval a
+#' @param B1 a
+#' @param B2 a
+#' @param D a
+#' @param dist a
+#' @param base a
+#' @param super a
+#' @param criterion a
+#' @param ranking a
+#' @param k a
+#' @param cores a
+#' @param seed a
+#' @param iteration a
+#' @param cutoff a
+#' @param cv a
+#' @param scale a
+#' @param C0 a
+#' @param kl.k a
+#' @param lower.limits a
+#' @param upper.limits a
+#' @param weights a
+#' @param ... a
 #' @importFrom MASS lda
 #' @importFrom MASS qda
 #' @importFrom MASS mvrnorm
@@ -54,6 +79,9 @@
 #' @importFrom glmnet predict.glmnet
 #' @importFrom ModelMetrics auc
 #' @importFrom lava Expand
+#' @importFrom stats quantile
+#' @importFrom stats IQR
+
 
 multiRasenew <- function(xtrain, ytrain,
                       xval = NULL, yval = NULL,

@@ -1,6 +1,10 @@
 #' Predict the outcome of new observations based on the estimated super mRaSE classifier (Bi, F., Zhu, J. and Feng, Y., 2022).
 #'
 #' @export
+#' @param object a
+#' @param newx a
+#' @param type a
+#' @param ... a
 #' @examples
 #' set.seed(0, kind = "L'Ecuyer-CMRG")
 #' train.data <- RaModel("multi_classification", model.no = 1, n = 100,
@@ -15,12 +19,12 @@
 #' ytest <- test.data$y
 #'
 #' fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0,
-#'base = 'lda', cores = 1)
+#'base = c('lda','knn'), cores = 1)
 #' ypred <- predict(fit, xtest)
 #' mean(ypred != ytest)
 
 
-predict.SmultiRaSE <- function(object, newx, type = c("vote", "prob", "raw-vote", "raw-prob"), ...) {
+predict.SmRaSE <- function(object, newx, type = c("vote", "prob", "raw-vote", "raw-prob"), ...) {
   type <- match.arg(type)
 
   alpha = as.numeric(object$cutoff)
@@ -29,7 +33,7 @@ predict.SmultiRaSE <- function(object, newx, type = c("vote", "prob", "raw-vote"
   }
 
   ytest.pred <- sapply(1:object$B1, function(i) {
-  if (object$base.list[i] == "lda" || object$base.list[i] == "qda") {
+  if (object$base.list[i] == "lda") {
     if (type == "vote" || type == "raw-vote") {
       rs <- as.numeric(predict(object$fit.list[[i]], newx[, object$subspace[[i]], drop = F])$class)
       }else if (type == "prob" || type == "raw-prob") {

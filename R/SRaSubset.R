@@ -1,4 +1,3 @@
-#' @export
 SRaSubset <- function(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval,
                       B2 = B2, S = S, base = base, base.list = base.list,
                       k = k, criterion = criterion,cv = cv,
@@ -309,10 +308,6 @@ SRaSubset <- function(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval
         i0 <- which.min(subspace.list)
         S <- S[!is.na(S[, i0]), i0]  # final optimal subspace
         xtrain.r <- xtrain[, S, drop = F]
-        if (base.list[i0] == "qda"){
-            fit <- qda(x = as.matrix(xtrain.r), grouping = ytrain)
-            ytrain.pred <- as.numeric(predict(fit, xtrain.r)$class)
-        }
         if (base.list[i0] == "lda"){
             fit <- lda(x = as.matrix(xtrain.r), grouping = ytrain)
             ytrain.pred <- predict(fit, as.matrix(xtrain.r))$class

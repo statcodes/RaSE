@@ -1,4 +1,4 @@
-#' @export
+
 RaSubsetnew <- function(xtrain, ytrain, xval, yval, B2, S, base, k, criterion, cv, t0.mle = NULL, t1.mle = NULL, mu0.mle = NULL,  mu1.mle = NULL, Sigma.mle = NULL, Sigma0.mle = NULL, Sigma1.mle = NULL, gam = NULL, kl.k = NULL, lower.limits = NULL, upper.limits = NULL, weights = NULL, ...) {
     list2env(list(...), environment())
 

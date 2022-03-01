@@ -6,8 +6,16 @@
 #' @importFrom keras keras_model_sequential
 #' @importFrom keras layer_dense
 #' @importFrom keras compile
-#' @param xtrain n * p observation matrix. n observations, p features.
-#' @param ytrain n 0/1 observations.
+#' @importFrom keras layer_dropout
+#' @importFrom keras optimizer_rmsprop
+#' @importFrom generics fit
+#' @param x_train a
+#' @param y_train a
+#' @param levels a
+#' @param max_units a
+#' @param dropout_rate a
+#' @param start a
+#'
 
 #' @return An Keras fitted model.
 #' \item{model}{The fitted Keras fitted model.}

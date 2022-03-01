@@ -2,6 +2,8 @@
 #'
 #' Label Transformation
 #' @export
+#' @param v a
+#' @param start a
 labeltrans <- function(v, start = 1){
   num <- length(unique(v))
   ori_lab <- unique(v)

@@ -54,13 +54,35 @@
 #' @importFrom glmnet predict.glmnet
 #' @importFrom ModelMetrics auc
 #' @importFrom lava Expand
-#'
+#' @importFrom stats quantile
+#' @importFrom stats IQR
 #' @param xtrain n * p observation matrix. n observations, p features.
 #' @param ytrain n observations with k classes.
 #' @param B1 the number of weak learners. Default = 200.
 #' @param B2 the number of subspace candidates generated for each weak learner. Default = 500.
-#' @param D_max the maximal subspace size when generating random subspaces. Default = NULL, which is \eqn{floor(min(\sqrt n, p))}. For classical RaSE with a single classifier type, D_max is a positive integer. For super RaSE with multiple classifier types, D_max is a vector indicating different maximum D values used for each base classifier type (the corresponding classifier types should be noted in the names of the vector).
-#' @seealso \code{\link{predict.SmultiRaSE}}.
+
+#' @param xval a
+#' @param yval a
+#' @param D a
+#' @param dist a
+#' @param base a
+#' @param super a
+#' @param criterion a
+#' @param ranking a
+#' @param k a
+#' @param cores a
+#' @param seed a
+#' @param iteration a
+#' @param cutoff a
+#' @param cv a
+#' @param scale a
+#' @param C0 a
+#' @param kl.k a
+#' @param lower.limits a
+#' @param upper.limits a
+#' @param weights a
+#' @param ... a
+#' @seealso \code{\link{predict.SmRaSE}}.
 #' @examples
 #' set.seed(0, kind = "L'Ecuyer-CMRG")
 #' train.data <- RaModel("multi_classification", model.no = 1, n = 100,
@@ -900,7 +922,7 @@ SmultiRase <- function(xtrain, ytrain,
         set.seed(i)
         base.list <- sample(base, size = B2, prob = base.dist, replace = TRUE)
         S <- sapply(1:B2, function(j) {
-          S.size <- sample(Dmin:D[base.list[i]], 1)
+          S.size <- sample(Dmin:D[base.list[j]], 1)
           snew <- sample(1:p, size = S.size, prob = dist[base.list[j], ])
 
           if (base.list[j] == "lda") {
@@ -945,6 +967,7 @@ SmultiRase <- function(xtrain, ytrain,
         SRaSubset(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval,
                   B2 = B2, S = S, base = base, base.list = base.list,k = k,
                   criterion = criterion, cv = cv, nmulti = nmulti,D = D)
+
       }
 
       if (is.matrix(output)) {
@@ -1068,7 +1091,7 @@ SmultiRase <- function(xtrain, ytrain,
               B1 = B1, B2 = B2, D = D,
               nmulti = nmulti,table = lab_table,
               iteration = iteration, fit.list = fit.list, cutoff = cutoff, subspace = subspace, ranking = rk, scale = scale.parameters)
-  class(obj) <- "multiRaSE"
+  class(obj) <- "mRaSE"
   }
   else  { # super RaSE
     if (ranking == TRUE) {
@@ -1098,7 +1121,7 @@ SmultiRase <- function(xtrain, ytrain,
                 criterion = criterion, B1 = B1, B2 = B2,
                 D = D,nmulti = nmulti,table = lab_table,
                 iteration = iteration, fit.list = fit.list, cutoff = cutoff, subspace = subspace, ranking.feature = rk.feature, ranking.base = rk.base, scale = scale.parameters)
-    class(obj) <- "SmultiRaSE"
+    class(obj) <- "SmRaSE"
   }
 
   return(obj)
