@@ -1,5 +1,30 @@
+#' Predict the outcome of new observations based on the estimated mRaSE classifier (Bi, F., Zhu, J. and Feng, Y., 2022).
+#'
 #' @export
-predict.multiRaSE <- function(object, newx, type = c("vote", "prob", "raw-vote", "raw-prob"), ...) {
+#' @param object a
+#' @param newx a
+#' @param type a
+#' @param ... a
+#' @examples
+#' set.seed(0, kind = "L'Ecuyer-CMRG")
+#' train.data <- RaModel("multi_classification", model.no = 1, n = 100,
+#' p = 50, p0 = rep(1/4,4))
+#' test.data <- RaModel("multi_classification", model.no = 1, n = 100,
+#' p = 50, p0 = rep(1/4,4))
+#' xtrain <- train.data$x
+#' colnames(xtrain) <- paste0("V",1:dim(xtrain)[2])
+#' ytrain <- train.data$y
+#' xtest <- test.data$x
+#' colnames(xtest) <- paste0("V",1:dim(xtest)[2])
+#' ytest <- test.data$y
+#'
+#' fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0,
+#'base = 'lda', cores = 1)
+#' ypred <- predict(fit, xtest)
+#' mean(ypred != ytest)
+
+
+predict.mRaSE <- function(object, newx, type = c("vote", "prob", "raw-vote", "raw-prob"), ...) {
   type <- match.arg(type)
 
   alpha = as.numeric(object$cutoff)
@@ -7,7 +32,7 @@ predict.multiRaSE <- function(object, newx, type = c("vote", "prob", "raw-vote",
     newx <- scale(newx, center = object$scale$center, scale = object$scale$scale)
   }
 
-  if (object$base == "lda" || object$base == "qda") {
+  if (object$base == "lda") {
     if (type == "vote" || type == "raw-vote") {
       ytest.pred <- sapply(1:object$B1, function(i) {
         as.numeric(predict(object$fit.list[[i]], newx[, object$subspace[[i]], drop = F])$class)
@@ -101,7 +126,7 @@ predict.multiRaSE <- function(object, newx, type = c("vote", "prob", "raw-vote",
       })
     }
     vote <- as.data.frame(t(vote))
-    names(vote) <- label[1:object$nmulti,1]
+    names(vote) <- object$label[1:object$nmulti,1]
     return(vote)
   } else if (type == "raw-vote" || type == "raw-prob") {
     return(ytest.pred)

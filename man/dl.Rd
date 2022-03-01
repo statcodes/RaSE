@@ -10,6 +10,8 @@ dl(xtrain, ytrain, levels = 4)
 \item{xtrain}{n * p observation matrix. n observations, p features.}
 
 \item{ytrain}{n 0/1 observations.}
+
+\item{levels}{a}
 }
 \value{
 An Keras fitted model.

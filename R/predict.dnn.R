@@ -6,8 +6,9 @@
 #' @importFrom keras keras_model_sequential
 #' @importFrom keras layer_dense
 #' @importFrom keras compile
-#' @param fit dnn fitted object.
-#' @param xtrain n * p observation matrix. n observations, p features.
+#' @param object a
+#' @param newdata a
+#' @param ... a
 
 #' @return Predicted response.
 #' \item{ypred}{The predicted response.}
@@ -30,14 +31,14 @@
 #'
 
 
-predict.dnn <- function(fit = dnn_fit, newdata = x_test){
+predict.dnn <- function(object, newdata, ...){
 
-    label <- fit$label
+    label <- object$label
     newdata <- sapply(1:ncol(newdata),
                       function(j){
-                        (newdata[,j]-fit$min_seq[j])/ (fit$max_seq[j]-fit$min_seq[j])
+                        (newdata[,j]-object$min_seq[j])/ (object$max_seq[j]-object$min_seq[j])
                       })
-    y_pred <- fit$model %>% predict(newdata)
+    y_pred <- object$model %>% predict(newdata)
     y_pred_label <- apply(y_pred, 1, which.max)
     return(label[y_pred_label, 1])
 }
