@@ -6,6 +6,11 @@
 \usage{
 labeltrans(v, start = 1)
 }
+\arguments{
+\item{v}{a}
+
+\item{start}{a}
+}
 \description{
 Label Transformation
 }

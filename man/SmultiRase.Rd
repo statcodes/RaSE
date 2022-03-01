@@ -37,11 +37,51 @@ SmultiRase(
 
 \item{ytrain}{n observations with k classes.}
 
+\item{xval}{a}
+
+\item{yval}{a}
+
 \item{B1}{the number of weak learners. Default = 200.}
 
 \item{B2}{the number of subspace candidates generated for each weak learner. Default = 500.}
 
-\item{D_max}{the maximal subspace size when generating random subspaces. Default = NULL, which is \eqn{floor(min(\sqrt n, p))}. For classical RaSE with a single classifier type, D_max is a positive integer. For super RaSE with multiple classifier types, D_max is a vector indicating different maximum D values used for each base classifier type (the corresponding classifier types should be noted in the names of the vector).}
+\item{D}{a}
+
+\item{dist}{a}
+
+\item{base}{a}
+
+\item{super}{a}
+
+\item{criterion}{a}
+
+\item{ranking}{a}
+
+\item{k}{a}
+
+\item{cores}{a}
+
+\item{seed}{a}
+
+\item{iteration}{a}
+
+\item{cutoff}{a}
+
+\item{cv}{a}
+
+\item{scale}{a}
+
+\item{C0}{a}
+
+\item{kl.k}{a}
+
+\item{lower.limits}{a}
+
+\item{upper.limits}{a}
+
+\item{weights}{a}
+
+\item{...}{a}
 }
 \description{
 \code{SmRaSE} is a general ensemble classification framework, adapted from RaSE algorithm, to solve the sparse multi class classification problem. Like RaSE algorithm, for each of the B1 weak learners, B2 random subspaces are generated and the optimal one is chosen to train the model on the basis of some criterion.
@@ -99,5 +139,5 @@ mean(predict(fit, xtest) != ytest)
 }
 }
 \seealso{
-\code{\link{predict.SmultiRaSE}}.
+\code{\link{predict.SmRaSE}}.
 }

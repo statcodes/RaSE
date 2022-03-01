@@ -4,12 +4,14 @@
 \alias{predict.dnn}
 \title{Predict a deep learning model via keras.}
 \usage{
-\method{predict}{dnn}(fit = dnn_fit, newdata = x_test)
+\method{predict}{dnn}(object, newdata, ...)
 }
 \arguments{
-\item{fit}{dnn fitted object.}
+\item{object}{a}
 
-\item{xtrain}{n * p observation matrix. n observations, p features.}
+\item{newdata}{a}
+
+\item{...}{a}
 }
 \value{
 Predicted response.

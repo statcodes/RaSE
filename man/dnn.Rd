@@ -14,9 +14,17 @@ dnn(
 )
 }
 \arguments{
-\item{xtrain}{n * p observation matrix. n observations, p features.}
+\item{x_train}{a}
 
-\item{ytrain}{n 0/1 observations.}
+\item{y_train}{a}
+
+\item{levels}{a}
+
+\item{max_units}{a}
+
+\item{dropout_rate}{a}
+
+\item{start}{a}
 }
 \value{
 An Keras fitted model.
