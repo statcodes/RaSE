@@ -162,7 +162,7 @@ multiRasenew <- function(xtrain, ytrain,
 
   # scale the xtrain
   if (scale) {
-    L <- scale_Rase(xtrain)
+    L <- scale_RaSE(xtrain)
     xtrain <- L$data
     scale.center <- L$center
     scale.scale <- L$scale

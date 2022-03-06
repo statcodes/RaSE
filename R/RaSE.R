@@ -54,7 +54,7 @@
 #' @importFrom glmnet predict.glmnet
 #' @importFrom ModelMetrics auc
 #' @param xtrain n * p observation matrix. n observations, p features.
-#' @param ytrain n 0/1 observatons.
+#' @param ytrain n 0/1 observations.
 #' @param xval observation matrix for validation. Default = \code{NULL}. Useful only when \code{criterion} = 'validation'.
 #' @param yval 0/1 observation for validation. Default = \code{NULL}. Useful only when \code{criterion} = 'validation'.
 #' @param B1 the number of weak learners. Default = 200.

@@ -37,17 +37,17 @@ SmultiRase(
 
 \item{ytrain}{n observations with k classes.}
 
-\item{xval}{a}
+\item{xval}{observation matrix for validation. Default = \code{NULL}. Useful only when \code{criterion} = 'validation'.}
 
-\item{yval}{a}
+\item{yval}{0/1 observation for validation. Default = \code{NULL}. Useful only when \code{criterion} = 'validation'.}
 
-\item{B1}{the number of weak learners. Default = 200.}
+\item{B1}{the number of weak learners. Default = .}
 
 \item{B2}{the number of subspace candidates generated for each weak learner. Default = 500.}
 
-\item{D}{a}
+\item{D}{the maximal subspace size when generating random subspaces. Default = \code{NULL}, which is \eqn{min(\sqrt n0, \sqrt n1, p)} when \code{base} = 'qda' and is \eqn{min(\sqrt n, p)} otherwise. For classical RaSE with a single classifier type, \code{D} is a positive integer. For super RaSE with multiple classifier types, \code{D} is a vector indicating different D values used for each base classifier type (the corresponding classifier types should be noted in the names of the vector).}
 
-\item{dist}{a}
+\item{dist}{the distribution for features when generating random subspaces. Default = \code{NULL}, which represents the uniform distribution. First generate an integer \eqn{d} from \eqn{1,...,D} uniformly, then uniformly generate a subset with cardinality \eqn{d}.}
 
 \item{base}{a}
 

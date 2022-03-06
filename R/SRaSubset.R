@@ -1,3 +1,5 @@
+#' @importFrom stats na.omit
+
 SRaSubset <- function(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval,
                       B2 = B2, S = S, base = base, base.list = base.list,
                       k = k, criterion = criterion,cv = cv,

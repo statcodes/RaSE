@@ -35,6 +35,7 @@
 #' @importFrom stats rt
 #' @importFrom stats runif
 #' @importFrom stats deviance
+#' @importFrom stats na.omit
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 aes_string
@@ -58,13 +59,12 @@
 #' @importFrom stats IQR
 #' @param xtrain n * p observation matrix. n observations, p features.
 #' @param ytrain n observations with k classes.
-#' @param B1 the number of weak learners. Default = 200.
+#' @param xval observation matrix for validation. Default = \code{NULL}. Useful only when \code{criterion} = 'validation'.
+#' @param yval 0/1 observation for validation. Default = \code{NULL}. Useful only when \code{criterion} = 'validation'.
+#' @param B1 the number of weak learners. Default = .
 #' @param B2 the number of subspace candidates generated for each weak learner. Default = 500.
-
-#' @param xval a
-#' @param yval a
-#' @param D a
-#' @param dist a
+#' @param D the maximal subspace size when generating random subspaces. Default = \code{NULL}, which is \eqn{min(\sqrt n0, \sqrt n1, p)} when \code{base} = 'qda' and is \eqn{min(\sqrt n, p)} otherwise. For classical RaSE with a single classifier type, \code{D} is a positive integer. For super RaSE with multiple classifier types, \code{D} is a vector indicating different D values used for each base classifier type (the corresponding classifier types should be noted in the names of the vector).
+#' @param dist the distribution for features when generating random subspaces. Default = \code{NULL}, which represents the uniform distribution. First generate an integer \eqn{d} from \eqn{1,...,D} uniformly, then uniformly generate a subset with cardinality \eqn{d}.
 #' @param base a
 #' @param super a
 #' @param criterion a
@@ -212,7 +212,7 @@ SmultiRase <- function(xtrain, ytrain,
 
   # scale the xtrain
   if (scale) {
-    L <- scale_Rase(xtrain)
+    L <- scale_RaSE(xtrain)
     xtrain <- L$data
     scale.center <- L$center
     scale.scale <- L$scale

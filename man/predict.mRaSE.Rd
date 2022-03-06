@@ -4,21 +4,20 @@
 \alias{predict.mRaSE}
 \title{Predict the outcome of new observations based on the estimated mRaSE classifier (Bi, F., Zhu, J. and Feng, Y., 2022).}
 \usage{
-\method{predict}{mRaSE}(object, newx, type = c("vote", "prob", "raw-vote", "raw-prob"), ...)
+\method{predict}{mRaSE}(object, newx, ...)
 }
 \arguments{
-\item{object}{a}
+\item{object}{object fitted \code{'mRaSE'} object using \code{RaSE}.}
 
-\item{newx}{a}
+\item{newx}{a set of new observations. Each row of \code{newx} is a new observation.}
 
-\item{type}{a}
-
-\item{...}{a}
+\item{...}{additional arguments.}
 }
 \description{
 Predict the outcome of new observations based on the estimated mRaSE classifier (Bi, F., Zhu, J. and Feng, Y., 2022).
 }
 \examples{
+
 set.seed(0, kind = "L'Ecuyer-CMRG")
 train.data <- RaModel("multi_classification", model.no = 1, n = 100,
 p = 50, p0 = rep(1/4,4))
@@ -31,8 +30,10 @@ xtest <- test.data$x
 colnames(xtest) <- paste0("V",1:dim(xtest)[2])
 ytest <- test.data$y
 
-fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0,
+\dontrun{
+fit <- SmultiRaSE(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0,
 base = 'lda', cores = 1)
 ypred <- predict(fit, xtest)
 mean(ypred != ytest)
+#'}
 }

@@ -2,21 +2,19 @@
 % Please edit documentation in R/predict.SmRaSE.R
 \name{predict.SmRaSE}
 \alias{predict.SmRaSE}
-\title{Predict the outcome of new observations based on the estimated super mRaSE classifier (Bi, F., Zhu, J. and Feng, Y., 2022).}
+\title{Predict the outcome of new observations based on the estimated Super mRaSE classifier (Bi, F., Zhu, J. and Feng, Y., 2022).}
 \usage{
-\method{predict}{SmRaSE}(object, newx, type = c("vote", "prob", "raw-vote", "raw-prob"), ...)
+\method{predict}{SmRaSE}(object, newx, ...)
 }
 \arguments{
-\item{object}{a}
+\item{object}{object fitted \code{'SmRaSE'} object using \code{RaSE}.}
 
-\item{newx}{a}
+\item{newx}{a set of new observations. Each row of \code{newx} is a new observation.}
 
-\item{type}{a}
-
-\item{...}{a}
+\item{...}{additional arguments.}
 }
 \description{
-Predict the outcome of new observations based on the estimated super mRaSE classifier (Bi, F., Zhu, J. and Feng, Y., 2022).
+Predict the outcome of new observations based on the estimated Super mRaSE classifier (Bi, F., Zhu, J. and Feng, Y., 2022).
 }
 \examples{
 set.seed(0, kind = "L'Ecuyer-CMRG")
@@ -30,9 +28,9 @@ ytrain <- train.data$y
 xtest <- test.data$x
 colnames(xtest) <- paste0("V",1:dim(xtest)[2])
 ytest <- test.data$y
-
-fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0,
+\dontrun{
+fit <- SmultiRaSE(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0,
 base = c('lda','knn'), cores = 1)
 ypred <- predict(fit, xtest)
-mean(ypred != ytest)
+mean(ypred != ytest)}
 }

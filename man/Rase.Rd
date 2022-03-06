@@ -35,7 +35,7 @@ RaSE(
 \arguments{
 \item{xtrain}{n * p observation matrix. n observations, p features.}
 
-\item{ytrain}{n 0/1 observatons.}
+\item{ytrain}{n 0/1 observations.}
 
 \item{xval}{observation matrix for validation. Default = \code{NULL}. Useful only when \code{criterion} = 'validation'.}
 
