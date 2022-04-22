@@ -63,6 +63,7 @@ RaModel <- function(model.type, model.no, n, p, p0 = 1/2, sparse = TRUE) {
             }
 
             X <- tcrossprod(matrix(rnorm(n*p), nrow = n, ncol = p), t(R)) + rbind(matrix(rep(mu0, N[1]), nrow = N[1], byrow = T), matrix(rep(mu1, N[2]), nrow = N[2], byrow = T))
+
         }
 
         if (model.no == 2) {
@@ -78,6 +79,7 @@ RaModel <- function(model.type, model.no, n, p, p0 = 1/2, sparse = TRUE) {
             }), sapply(1:p, function(i) {
                 rgamma(Y1[2, 1], shape = a1[i], scale = b1[i])
             }))
+
         }
 
 
@@ -109,6 +111,7 @@ RaModel <- function(model.type, model.no, n, p, p0 = 1/2, sparse = TRUE) {
             X1 <- mvrnorm(Y1[2, 1], mu1, Sigma1)
 
             X <- rbind(X0, X1)
+
         }
 
         if (model.no == 4) {
@@ -279,6 +282,7 @@ RaModel <- function(model.type, model.no, n, p, p0 = 1/2, sparse = TRUE) {
                                                                                       matrix(rep(mu1, N[2]), nrow = N[2], byrow = T),
                                                                                       matrix(rep(mu2, N[3]), nrow = N[3], byrow = T),
                                                                                       matrix(rep(mu3, N[4]), nrow = N[4], byrow = T))
+                colnames(X) <- paste0("v",1:p)
             }
             if (model.no == 2) { # QDA
 
@@ -319,6 +323,7 @@ RaModel <- function(model.type, model.no, n, p, p0 = 1/2, sparse = TRUE) {
                     X0 <- mvrnorm(Y1[1], mu0, Sigma0)
 
                     X <- rbind(X0,X1,X2,X3)
+                    colnames(X) <- paste0("v",1:p)
             }
             if (model.no == 3) {# knn
                 X0 <- mvrnorm(n = 20, mu = rep(0, p), Sigma = diag(p))
@@ -336,6 +341,7 @@ RaModel <- function(model.type, model.no, n, p, p0 = 1/2, sparse = TRUE) {
                 }
 
                 X <- t(Ds[-nrow(Ds), ])
+                colnames(X) <- paste0("v",1:p)
                 Y <- Ds[nrow(Ds), ]
             }
             if (model.no == 4) { #multi logistic
@@ -346,6 +352,7 @@ RaModel <- function(model.type, model.no, n, p, p0 = 1/2, sparse = TRUE) {
                 beta3 <- c(1,1,mul,rep(0,p-3))
 
                 X <- mvrnorm(n,rep(0,p),0.5*diag(p))
+                colnames(X) <- paste0("v",1:p)
 
                 prob1 <- exp(X%*%beta1)
                 prob2 <- exp(X%*%beta2)

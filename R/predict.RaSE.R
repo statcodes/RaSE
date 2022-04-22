@@ -69,7 +69,7 @@ predict.RaSE <- function(object, newx, type = c("vote", "prob", "raw-vote", "raw
     if (object$base == "tree") {
         if (type == "vote" || type == "raw-vote") {
             ytest.pred <- sapply(1:object$B1, function(i) {
-                as.numeric(predict(object$fit.list[[i]], data.frame(x = newx[, object$subspace[[i]], drop = F]), type = "class"))
+                as.numeric(predict(object$fit.list[[i]], data.frame(x = newx[, object$subspace[[i]], drop = F]), type = "class")) - 1
             })
         } else if (type == "prob" || type == "raw-prob") {
             ytest.pred <- sapply(1:object$B1, function(i) {
