@@ -23,7 +23,7 @@ RaSE(
   iteration = 0,
   cutoff = TRUE,
   cv = 5,
-  scale = FALSE,
+  scale = TRUE,
   C0 = 0.1,
   kl.k = NULL,
   lower.limits = NULL,

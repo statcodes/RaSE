@@ -219,7 +219,7 @@
 #' }
 
 RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D = NULL, dist = NULL, base = NULL, super = list(type = c("separate"), base.update = TRUE), criterion = NULL, ranking = TRUE, k = c(3, 5, 7, 9, 11), cores = 1,
-                 seed = NULL, iteration = 0, cutoff = TRUE, cv = 5, scale = FALSE, C0 = 0.1, kl.k = NULL, lower.limits = NULL, upper.limits = NULL, weights = NULL, ...) {
+                 seed = NULL, iteration = 0, cutoff = TRUE, cv = 5, scale = TRUE, C0 = 0.1, kl.k = NULL, lower.limits = NULL, upper.limits = NULL, weights = NULL, ...) {
 
   nmulti <- length(unique(ytrain))
 
@@ -787,7 +787,7 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
 
     stopImplicitCluster()
     obj <- list(marginal = c(`class 0` = p0, `class 1` = 1 - p0), base = Reduce("c", base.list), criterion = criterion, B1 = B1, B2 = B2, D = D,
-                iteration = iteration, fit.list = fit.list, cutoff = cutoff, subspace = subspace, ranking.feature = rk.feature, ranking.base = rk.base, scale = scale.parameters)
+                iteration = iteration, fit.list = fit.list, cutoff = cutoff, subspace = subspace,ranking = list(ranking.feature = rk.feature,ranking.base = rk.feature), scale = scale.parameters)
     class(obj) <- "SRaSE"
   }
 
@@ -1765,7 +1765,7 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
                   base.list = base.list,
                   criterion = criterion, B1 = B1, B2 = B2,
                   D = D,nmulti = nmulti,table = lab_table,
-                  iteration = iteration, fit.list = fit.list, cutoff = cutoff, subspace = subspace, ranking.feature = rk.feature, ranking.base = rk.base, scale = scale.parameters)
+                  iteration = iteration, fit.list = fit.list, cutoff = cutoff, subspace = subspace, ranking = list(ranking.feature = rk.feature,ranking.base = rk.feature), scale = scale.parameters)
       class(obj) <- "SmRaSE"
     }
 

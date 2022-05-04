@@ -19,9 +19,11 @@ ytrain <- train.data$y
 xtest <- test.data$x
 ytest <- test.data$y
 
+# xtrain[,2] <- xtrain[,3]
+
 ts_tab <- Expand(list(base = base,criterion = criterion))
 
-i = 13
+i = 1
 
 ## training : not for knn
 ## auc : knn bad
@@ -84,8 +86,8 @@ fit_0 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
 class(fit_0)
 predict(fit_0,xtest)
 mean(predict(fit_0,xtest) != ytest)
-fit_0$ranking.base
-fit_0$ranking.feature
+fit_0$ranking
+
 
 
 fit_1 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
@@ -93,8 +95,8 @@ fit_1 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
 class(fit_1)
 predict(fit_1,xtest)
 mean(predict(fit_1,xtest) != ytest)
-fit_1$ranking.base
-fit_1$ranking.feature
+fit_1$ranking
+
 
 
 fit_2 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
@@ -102,8 +104,7 @@ fit_2 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
 class(fit_2)
 predict(fit_2,xtest)
 mean(predict(fit_2,xtest) != ytest)
-fit_2$ranking.base
-fit_2$ranking.feature
+fit_2$ranking
 
 
 cn.no <- 1
@@ -113,8 +114,7 @@ fit_0 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
 class(fit_0)
 predict(fit_0,xtest)
 mean(predict(fit_0,xtest) != ytest)
-fit_0$ranking.base
-fit_0$ranking.feature
+fit_0$ranking
 
 
 fit_1 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
@@ -122,8 +122,7 @@ fit_1 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
 class(fit_1)
 predict(fit_1,xtest)
 mean(predict(fit_1,xtest) != ytest)
-fit_1$ranking.base
-fit_1$ranking.feature
+fit_1$ranking
 
 
 fit_2 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
@@ -131,9 +130,7 @@ fit_2 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
 class(fit_2)
 predict(fit_2,xtest)
 mean(predict(fit_2,xtest) != ytest)
-fit_2$ranking.base
-fit_2$ranking.feature
-
+fit_2$ranking
 cn.no <- 2
 
 fit_0 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
@@ -141,8 +138,7 @@ fit_0 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
 class(fit_0)
 predict(fit_0,xtest)
 mean(predict(fit_0,xtest) != ytest)
-fit_0$ranking.base
-fit_0$ranking.feature
+fit_0$ranking
 
 
 fit_1 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
@@ -150,8 +146,7 @@ fit_1 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
 class(fit_1)
 predict(fit_1,xtest)
 mean(predict(fit_1,xtest) != ytest)
-fit_1$ranking.base
-fit_1$ranking.feature
+fit_1$ranking
 
 
 fit_2 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
@@ -159,8 +154,7 @@ fit_2 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
 class(fit_2)
 predict(fit_2,xtest)
 mean(predict(fit_2,xtest) != ytest)
-fit_2$ranking.base
-fit_2$ranking.feature
+fit_2$ranking
 
 cn.no <- 3
 
@@ -169,8 +163,7 @@ fit_0 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
 class(fit_0)
 predict(fit_0,xtest)
 mean(predict(fit_0,xtest) != ytest)
-fit_0$ranking.base
-fit_0$ranking.feature
+fit_0$ranking
 
 
 fit_1 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
@@ -178,8 +171,7 @@ fit_1 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
 class(fit_1)
 predict(fit_1,xtest)
 mean(predict(fit_1,xtest) != ytest)
-fit_1$ranking.base
-fit_1$ranking.feature
+fit_1$ranking
 
 
 fit_2 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
@@ -187,5 +179,8 @@ fit_2 <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
 class(fit_2)
 predict(fit_2,xtest)
 mean(predict(fit_2,xtest) != ytest)
-fit_2$ranking.base
-fit_2$ranking.feature
+fit_2$ranking
+
+
+
+
