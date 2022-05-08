@@ -24,8 +24,27 @@ cores = 8
 fit1 <- RaSE(xtrain, ytrain, B1 = B1 , B2 = B2, iteration = 0, base = base_seq, cores = 1)
 
 
+
 test.error <- mean(predict(fit1, xtest) != ytest)
 train.error <- mean(predict(fit1, xtrain) != ytrain)
+
+##Idea to fix as below. Same idea can be used to fix the qda.
+
+# mean(sapply(1:cv, function(j) {
+# cat(j)
+# aa <- tryCatch(
+#   expr = {
+#     lda(x = xtrain[-folds[[j]], Si, drop = F], grouping = ytrain[-folds[[j]]])
+#   },
+#   error = function(jj = 1){
+#     xx <- xtrain[-folds[[j]], Si, drop = F]
+#     lda(x = xx + rnorm(length(xx)) * 1e-5, grouping = ytrain[-folds[[j]]])
+#   }
+# )
+# mean(predict(aa, xtrain[folds[[j]], Si, drop = F])$class !=
+#        ytrain[folds[[j]]], na.rm = TRUE)
+# })
+
 
 
 
