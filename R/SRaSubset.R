@@ -128,12 +128,26 @@ SRaSubset <- function(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval
 
         folds <- createFolds(ytrain, k = cv)
         subspace.list <- sapply(1:B2, function(i) {
+            set.seed(i)
+            cat(i)
             # the last row is training error for each i in 1:B2
             Si <- S[, i][!is.na(S[, i])]  # current subspace
             mean(sapply(1:cv, function(j) {
-                mean(predict(lda(x = xtrain[-folds[[j]], Si, drop = F], grouping = ytrain[-folds[[j]]]), xtrain[folds[[j]], Si, drop = F])$class !=
+                cat(j)
+                aa <- tryCatch(
+                    expr = {
+                        lda(x = xtrain[-folds[[j]], Si, drop = F], grouping = ytrain[-folds[[j]]])
+                    },
+                    error = function(jj = 1){
+                        xx <- xtrain[-folds[[j]], Si, drop = F]
+                        lda(x = xx + rnorm(length(xx)) * 1e-5, grouping = ytrain[-folds[[j]]])
+                    }
+                )
+                mean(predict(aa, xtrain[folds[[j]], Si, drop = F])$class !=
                          ytrain[folds[[j]]], na.rm = TRUE)
-            }))
+            }
+            )
+            )
         })
 
         i0 <- which.min(subspace.list)

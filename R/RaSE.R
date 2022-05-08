@@ -897,7 +897,7 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
         dist[delete.ind] <- 0
         Dmin <- 1
         for (t in 1:(iteration + 1)) {
-          output <- foreach(i = 1:B1, .combine = "rbind", .packages = "MASS") %dopar% {
+          output <- foreach(i = 1:B1, .combine = "rbind", .packages = "MASS") %do% {
             cat("i=",i," starts","\n")
             S <- sapply(1:B2, function(j) {
 
@@ -926,7 +926,7 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
               }
               snew1
             })
-
+            set.seed(i)
             SRaSubset(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval, B2 = B2, S = S, base = base, k = k,
                       criterion = criterion, cv = cv, nmulti = nmulti, ...)
 

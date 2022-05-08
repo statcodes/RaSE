@@ -1,3 +1,6 @@
+library(readxl)
+library(foreach)
+library(lava)
 d2 <- read_xlsx("diabetes_012_health_indicators_BRFSS2015.xlsx")
 set.seed(20)
 d <- d2[sample(1:nrow(d2), 5000),]
@@ -14,11 +17,12 @@ xtest <- dx[test_ind, ]
 ytrain <- dy[train_ind]
 ytest <- dy[test_ind]
 base_seq <- c("lda")
-B1 = 20
-B2 = 50
+B1 = 50
+B2 = 20
 cores = 8
 
-fit1 <- RaSE(xtrain, ytrain, B1 = B1 , B2 = B2, iteration = 0,base = base_seq, cores = cores)
+fit1 <- RaSE(xtrain, ytrain, B1 = B1 , B2 = B2, iteration = 0, base = base_seq, cores = 1)
+
 
 test.error <- mean(predict(fit1, xtest) != ytest)
 train.error <- mean(predict(fit1, xtrain) != ytrain)
