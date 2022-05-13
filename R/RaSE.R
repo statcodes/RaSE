@@ -14,7 +14,7 @@
 #' @importFrom doParallel registerDoParallel
 #' @importFrom doParallel stopImplicitCluster
 #' @importFrom foreach foreach
-#' @importFrom foreach %dopar%
+#' @importFrom foreach %dopar% %do%
 #' @importFrom parallel detectCores
 #' @importFrom rpart rpart
 #' @importFrom nnet multinom
@@ -449,7 +449,9 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
     }
   }
 
-  if (is.null(base.dist) && (base == "knn" || base == "tree" || base == "logistic" || base == "svm" || base == "randomforest")) {
+  if (is.null(base.dist) && (base == "knn" || base == "tree" ||
+                             base == "logistic" || base == "svm" ||
+                             base == "randomforest")) {
 
     # estimate parameters
     if (is.null(D)) {
@@ -507,7 +509,6 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
       fit.list <- output[1]
     }
   }
-
 
   if (is.null(base.dist) && base == "gamma") {
     # estimate parameters
@@ -571,7 +572,6 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
 
   # super RaSE
   # -------------------------------
-
   if (!is.null(base.dist) && super$type == "separate") {
 
     dist <- matrix(1, nrow = length(base), ncol = p)
@@ -728,8 +728,6 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
     }
   }
 
-
-
   # output
   # -------------------------------
 
@@ -790,12 +788,9 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
                 iteration = iteration, fit.list = fit.list, cutoff = cutoff, subspace = subspace,ranking = list(ranking.feature = rk.feature,ranking.base = rk.feature), scale = scale.parameters)
     class(obj) <- "SRaSE"
   }
-
-
-  }
+}
 
   else {
-
     criterion = "cv"
 
     if(is.null(base)){base = "lda"}
@@ -811,6 +806,7 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
        any(is.null(colnames(xtrain)))){
       stop("column names of xtrain contains NA or NULL! Please make sure the column names of xtrain and xtest have no NAs or NULLs!")
     }
+
     #label from 1 to K
     trans_inf <- labeltrans(ytrain)
     ytrain <- trans_inf$vnew
@@ -838,22 +834,18 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
     }
 
     #single base doesn't has base.dist
-
-
-    # features of input
     p <- ncol(xtrain)
     n <- length(ytrain)
     nmulti <- length(unique(ytrain))
 
     # prior class
-    n_start <- sapply(1:nmulti, function(i)sum(ytrain == i))
-
+    n_start <- sapply(1:nmulti, function(i)
+      sum(ytrain == i))
 
 
     if(is.null(kl.k)) {
       kl.k <- floor(sqrt(n_start))
     } ######### delete
-
 
     # scale the xtrain
     if (scale) {
@@ -863,24 +855,14 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
       scale.scale <- L$scale
     }
 
-
     registerDoParallel(cores)
 
-    if(length(base) == 1){ #regular RaSE
+    if(length(base) == 1){ # mRaSE
 
-      # base classifier : lda
-
-      if (base == "lda") {
-
+      if(base == 'lda' | base == 'qda'){
         # clean data (delete variables with high collinearity and variables that have constant values)
         delete.ind <- remove_ind(xtrain, ytrain)
         sig.ind <- setdiff(1:p, delete.ind)
-
-
-        # estimate parameters
-        if (is.null(D)) {
-          D <- floor(min(sqrt(n), length(sig.ind)))
-        }
 
         Sigma.mle <- 0
         for(i in 1:nmulti){
@@ -891,14 +873,27 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
         for(i in 1:nmulti){
           mu.mle[i,] <- colMeans(xtrain[ytrain == i,,drop = F])
         }
+      }
 
-        # start loops
-        dist <- rep(1, p)
-        dist[delete.ind] <- 0
-        Dmin <- 1
-        for (t in 1:(iteration + 1)) {
-          output <- foreach(i = 1:B1, .combine = "rbind", .packages = "MASS") %do% {
-            cat("i=",i," starts","\n")
+      if (is.null(D)) {
+        D <- floor(min(sqrt(n), p))
+      }
+
+      if (all(is.null(lower.limits)) && all(is.null(upper.limits)) && base == "logistic" || criterion == "nric") {
+        use.glmnet <- FALSE
+      } else {
+        use.glmnet <- TRUE
+      }
+
+      # start loop
+      dist <- rep(1, p)
+      if (base == 'lda' | base == 'qda') {dist[delete.ind] <- 0}
+      Dmin <- 1
+      for (t in 1:(iteration + 1)) {
+        output <- foreach(i = 1:B1, .combine = "rbind", .packages = "MASS") %dopar% {
+
+          cat("i=",i," starts","\n")
+          if(base == 'lda' | base == 'qda'){
             S <- sapply(1:B2, function(j) {
 
               S.size <- sample(Dmin:D, 1)
@@ -926,211 +921,8 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
               }
               snew1
             })
-            set.seed(i)
-            SRaSubset(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval, B2 = B2, S = S, base = base, k = k,
-                      criterion = criterion, cv = cv, nmulti = nmulti, ...)
-
           }
-
-          if (is.matrix(output)) {
-            subspace <- output[, 3]
-          } else {
-            subspace <- output[3]
-          }
-
-          # Get the number of features in each model
-
-          s_num <- sapply(1:B1, function(i){length(subspace[[i]])})
-
-          # Get the frequency of each feature in B1 models served as the new dist
-
-          s <- rep(0, p)
-          for (i in 1:length(subspace)) {
-            s[subspace[[i]]] <- s[subspace[[i]]] + 1
-          }
-
-          dist <- s/B1
-          dist[dist < C0/log(p)] <- C0/p
-          dist[delete.ind] <- 0
-
-          max_size <- sum(dist != 0)
-          Dmin <- round(max(1,quantile(s_num,.25)-1.5*IQR(s_num)))
-          D <- round(min(quantile(s_num,.75) + 1.5*IQR(s_num),
-                         max_size))
-        }
-
-        if (is.matrix(output)) {
-          ytrain.pred <- data.frame(matrix(unlist(output[, 2]), ncol = B1))
-          fit.list <- output[, 1]
-        } else {
-          ytrain.pred <- data.frame(matrix(unlist(output[2]), ncol = B1))
-          fit.list <- output[1]
-        }
-
-        y_count <- matrix(nrow = n,ncol = nmulti)
-        for(i in 1:n){
-          for(j in 1:nmulti){
-            y_count[i,j] = sum(ytrain.pred[i,] == j)/B1
-          }
-        }
-
-        # cv
-        if(nmulti <= 5){
-          cb_list <- lapply(1:nmulti,function(i){seq(0,0.9,0.1)})
-          cb <- Expand(cb_list)
-        }else{
-          n_thre <- round(10^5/nmulti)
-          cb <- matrix(runif(n_thre*nmulti),n_thre,nmulti)
-        }
-
-        cb <- as.matrix(cb)
-        error <- foreach(i = 1:dim(cb)[1],.combine = "rbind",.packages = "MASS") %dopar%{
-          alpha = cb[i,]
-          pre.ind <- sapply(1:n,function(k){as.numeric(which.max(y_count[k,]+alpha))})
-          mis <- sum(ytrain!=pre.ind)/n
-          return(list(alpha = alpha,pre.ind = pre.ind,mis = mis))
-        }
-
-        error <- as.matrix(error)
-        indc <-  which.min(as.numeric(error[,3]))
-        cutoff <- error[[indc,1]]
-        pre <- error[[indc,2]]
-
-
-      }
-
-      # base classifier : qda
-
-      if (base == "qda") {
-
-        # clean data (delete variables with high collinearity and variables that have constant values)
-        delete.ind <- remove_ind(xtrain, ytrain)
-        sig.ind <- setdiff(1:p, delete.ind)
-
-        # estimate parameters
-        if (is.null(D)) {
-          D <- floor(min(sqrt(n), length(sig.ind)))
-        }
-
-
-        Sigma.mle.qda <- compute_Sigma(xtrain, ytrain, nmulti, n_start)
-
-        mu.mle.qda <- compute_mu(xtrain, ytrain, nmulti)
-
-
-        # start loops
-        dist <- rep(1, p)
-        dist[delete.ind] <- 0
-        Dmin <- 1
-        for (t in 1:(iteration + 1)) {
-          output <- foreach(i = 1:B1, .combine = "rbind", .packages = "MASS") %dopar% {
-            cat("i=",i," starts","\n")
-            S <- sapply(1:B2, function(j) {
-
-              S.size <- sample(Dmin:D, 1)
-
-              c(sample(1:p, size = S.size, prob = dist),
-                rep(NA, D - min(S.size, length(dist[dist != 0]))))
-
-            }) # matrix of selected features (nrow = D, ncol = B2)
-
-            S <- sapply(1:B2, function(j)
-              remove_linear_combo(S[, j], Sigma.mle.qda, mu.mle.qda, D, nmulti)
-
-            )
-
-            SRaSubset(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval, B2 = B2, S = S, base = base, k = k,
-                      criterion = criterion, cv = cv, nmulti = nmulti, D = D, ...)
-
-          }
-
-          if (is.matrix(output)) {
-            subspace <- output[, 3]
-          } else {
-            subspace <- output[3]
-          }
-
-          # Get the number of features in each model
-
-          s_num <- sapply(1:B1, function(i){length(subspace[[i]])})
-
-          # Get the frequency of each feature in B1 models served as the new dist
-
-          s <- rep(0, p)
-          for (i in 1:length(subspace)) {
-            s[subspace[[i]]] <- s[subspace[[i]]] + 1
-          }
-
-          dist <- s/B1
-          dist[dist < C0/log(p)] <- C0/p
-          dist[delete.ind] <- 0
-
-          max_size <- sum(dist != 0)
-          Dmin <- round(max(1,quantile(s_num,.25)-1.5*IQR(s_num)))
-          D <- round(min(quantile(s_num,.75) + 1.5*IQR(s_num),
-                         max_size))
-        }
-
-        if (is.matrix(output)) {
-          ytrain.pred <- data.frame(matrix(unlist(output[, 2]), ncol = B1))
-          fit.list <- output[, 1]
-        } else {
-          ytrain.pred <- data.frame(matrix(unlist(output[2]), ncol = B1))
-          fit.list <- output[1]
-        }
-
-        y_count <- matrix(nrow = n,ncol = nmulti)
-        for(i in 1:n){
-          for(j in 1:nmulti){
-            y_count[i,j] = sum(ytrain.pred[i,] == j)/B1
-          }
-        }
-
-        # cv
-        if(nmulti <= 5){
-          cb_list <- lapply(1:nmulti,function(i){seq(0,0.9,0.1)})
-          cb <- Expand(cb_list)
-        }else{
-          n_thre <- round(10^5/nmulti)
-          cb <- matrix(runif(n_thre*nmulti),n_thre,nmulti)
-        }
-
-        cb <- as.matrix(cb)
-        error <- foreach(i = 1:dim(cb)[1],.combine = "rbind",.packages = "MASS") %dopar%{
-          alpha = cb[i,]
-          pre.ind <- sapply(1:n,function(k){as.numeric(which.max(y_count[k,]+alpha))})
-          mis <- sum(ytrain!=pre.ind)/n
-          return(list(alpha = alpha,pre.ind = pre.ind,mis = mis))
-        }
-
-        error <- as.matrix(error)
-        indc <-  which.min(as.numeric(error[,3]))
-        cutoff <- error[[indc,1]]
-        pre <- error[[indc,2]]
-
-      }
-
-      # base classifier : knn
-
-      if (base == "knn"){
-
-        # estimate parameters
-        if (is.null(D)) {
-          D <- floor(min(sqrt(n), p))
-        }
-
-        if (all(is.null(lower.limits)) && all(is.null(upper.limits)) && base == "logistic" || criterion == "nric") {
-          use.glmnet <- FALSE
-        } else {
-          use.glmnet <- TRUE
-        }
-
-        # start loops
-        dist <- rep(1, p)
-        Dmin <- 1
-        for (t in 1:(iteration + 1)) {
-          output <- foreach(i = 1:B1, .combine = "rbind", .packages = "MASS") %dopar% {
-            cat("i=",i," starts","\n")
+          if(base == 'knn' | base == 'logistic'){
             S <- sapply(1:B2, function(j) {
               if (use.glmnet) {
                 S.size <- sample(2:D, 1) # glmnet cannot fit the model with a single variable
@@ -1143,353 +935,83 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
               c(sample(1:p, size = min(S.size, length(dist[dist != 0])), prob = dist), rep(NA, D - min(S.size, length(dist[dist !=
                                                                                                                              0]))))
             })
-
-            SRaSubset(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval, B2 = B2, S = S, base = base, k = k,
-                      criterion = criterion, cv = cv)
-
           }
-
-
-          if (is.matrix(output)) {
-            subspace <- output[, 3]
-          } else {
-            subspace <- output[3]
-          }
-
-          # Get the number of features in each model
-
-          s_num <- sapply(1:B1, function(i){length(subspace[[i]])})
-
-          s <- rep(0, p)
-          for (i in 1:length(subspace)) {
-            s[subspace[[i]]] <- s[subspace[[i]]] + 1
-          }
-
-          dist <- s/B1
-          dist[dist < C0/log(p)] <- C0/p
-
-          max_size <- sum(dist != 0)
-          Dmin <- round(max(1,quantile(s_num,.25)-1.5*IQR(s_num)))
-          D <- round(min(quantile(s_num,.75) + 1.5*IQR(s_num),
-                         max_size))
-        }
-
-        if (is.matrix(output)) {
-          ytrain.pred <- data.frame(matrix(unlist(output[, 2]), ncol = B1))
-          fit.list <- output[, 1]
-        } else {
-          ytrain.pred <- data.frame(matrix(unlist(output[2]), ncol = B1))
-          fit.list <- output[1]
-        }
-
-        y_count <- matrix(nrow = n,ncol = nmulti)
-        for(i in 1:n){
-          for(j in 1:nmulti){
-            y_count[i,j] = sum(ytrain.pred[i,] == j)/B1
-          }
-        }
-
-        # cv
-        if(nmulti <= 5){
-          cb_list <- lapply(1:nmulti,function(i){seq(0,0.9,0.1)})
-          cb <- Expand(cb_list)
-        }else{
-          n_thre <- round(10^5/nmulti)
-          cb <- matrix(runif(n_thre*nmulti),n_thre,nmulti)
-        }
-
-        cb <- as.matrix(cb)
-        error <- foreach(i = 1:dim(cb)[1],.combine = "rbind",.packages = "MASS") %dopar%{
-          alpha = cb[i,]
-          pre.ind <- sapply(1:n,function(k){as.numeric(which.max(y_count[k,]+alpha))})
-          mis <- sum(ytrain!=pre.ind)/n
-          return(list(alpha = alpha,pre.ind = pre.ind,mis = mis))
-        }
-
-        error <- as.matrix(error)
-        indc <-  which.min(as.numeric(error[,3]))
-        cutoff <- error[[indc,1]]
-        pre <- error[[indc,2]]
-
-      }
-
-      # base classifier : logistic
-
-      if (base == "logistic"){
-
-        # estimate parameters
-        if (is.null(D)) {
-          D <- floor(min(sqrt(n), p))
-        }
-
-        if (all(is.null(lower.limits)) && all(is.null(upper.limits)) && base == "logistic" || criterion == "nric") {
-          use.glmnet <- FALSE
-        } else {
-          use.glmnet <- TRUE
-        }
-
-        # start loops
-        dist <- rep(1, p)
-        Dmin <- 1
-        for (t in 1:(iteration + 1)) {
-          output <- foreach(i = 1:B1, .combine = "rbind", .packages = "MASS") %dopar% {
-            cat("i=",i," starts","\n")
-            S <- sapply(1:B2, function(j) {
-              if (use.glmnet) {
-                S.size <- sample(2:D, 1) # glmnet cannot fit the model with a single variable
-                if (length(dist[dist != 0]) == 1) {
-                  stop ("Only one feature has positive sampling weights! 'glmnet' cannot be applied in this case! ")
-                }
-              } else {
-                S.size <- sample(Dmin:D, 1)
-              }
-              c(sample(1:p, size = min(S.size, length(dist[dist != 0])), prob = dist), rep(NA, D - min(S.size, length(dist[dist !=
-                                                                                                                             0]))))
-            })
-
-            SRaSubset(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval, B2 = B2, S = S, base = base, k = k, criterion = criterion, cv = cv, nmulti = nmulti, ...)
-
-          }
-
-
-          if (is.matrix(output)) {
-            subspace <- output[, 3]
-          } else {
-            subspace <- output[3]
-          }
-
-          # Get the number of features in each model
-
-          s_num <- sapply(1:B1, function(i){length(subspace[[i]])})
-
-          s <- rep(0, p)
-          for (i in 1:length(subspace)) {
-            s[subspace[[i]]] <- s[subspace[[i]]] + 1
-          }
-
-          dist <- s/B1
-          dist[dist < C0/log(p)] <- C0/p
-
-          max_size <- sum(dist != 0)
-          Dmin <- round(max(1,quantile(s_num,.25)-1.5*IQR(s_num)))
-          D <- round(min(quantile(s_num,.75) + 1.5*IQR(s_num),
-                         max_size))
-        }
-
-        if (is.matrix(output)) {
-          ytrain.pred <- data.frame(matrix(unlist(output[, 2]), ncol = B1))
-          fit.list <- output[, 1]
-        } else {
-          ytrain.pred <- data.frame(matrix(unlist(output[2]), ncol = B1))
-          fit.list <- output[1]
-        }
-
-        y_count <- matrix(nrow = n,ncol = nmulti)
-        for(i in 1:n){
-          for(j in 1:nmulti){
-            y_count[i,j] = sum(ytrain.pred[i,] == j)/B1
-          }
-        }
-
-        # cv
-        if(nmulti <= 5){
-          cb_list <- lapply(1:nmulti,function(i){seq(0,0.9,0.1)})
-          cb <- Expand(cb_list)
-        }else{
-          n_thre <- round(10^5/nmulti)
-          cb <- matrix(runif(n_thre*nmulti),n_thre,nmulti)
-        }
-
-        cb <- as.matrix(cb)
-        error <- foreach(i = 1:dim(cb)[1],.combine = "rbind",.packages = "MASS") %dopar%{
-          alpha = cb[i,]
-          pre.ind <- sapply(1:n,function(k){as.numeric(which.max(y_count[k,]+alpha))})
-          mis <- sum(ytrain!=pre.ind)/n
-          return(list(alpha = alpha,pre.ind = pre.ind,mis = mis))
-        }
-
-        error <- as.matrix(error)
-        indc <-  which.min(as.numeric(error[,3]))
-        cutoff <- error[[indc,1]]
-        pre <- error[[indc,2]]
-
-      }
-
-      # base classifier : svm
-
-      if (base == "svm"){
-
-        if (is.null(D)) {
-          D <- floor(min(sqrt(n), p))
-        }
-
-        dist <- rep(1, p)
-        Dmin <- 1
-        for (t in 1:(iteration + 1)) {
-          output <- foreach(i = 1:B1, .combine = "rbind", .packages = "MASS") %dopar% {
-            cat("i=",i,"\n")
+          if(base == 'svm' | base == 'tree'){
             S <- sapply(1:B2, function(j) {
               S.size <- sample(Dmin:D, 1)
               c(sample(1:p, size = min(S.size, length(dist[dist != 0])), prob = dist),
                 rep(NA, D - min(S.size, length(dist[dist !=0]))))
             })
-
-            SRaSubset(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval, B2 = B2, S = S, base = base, k = k, kl.k = kl.k,
-                      criterion = criterion, cv = cv)
           }
 
 
+          SRaSubset(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval, B2 = B2, S = S, base = base, k = k,
+                    criterion = criterion, cv = cv, nmulti = nmulti, ...)
 
-          if (is.matrix(output)) {
-            subspace <- output[, 3]
-          } else {
-            subspace <- output[3]
-          }
 
-          # Get the number of features in each model
-
-          s_num <- sapply(1:B1, function(i){length(subspace[[i]])})
-
-          s <- rep(0, p)
-          for (i in 1:length(subspace)) {
-            s[subspace[[i]]] <- s[subspace[[i]]] + 1
-          }
-
-          dist <- s/B1
-          dist[dist < C0/log(p)] <- C0/p
-
-          max_size <- sum(dist != 0)
-          Dmin <- round(max(1,quantile(s_num,.25)-1.5*IQR(s_num)))
-          D <- round(min(quantile(s_num,.75) + 1.5*IQR(s_num),
-                         max_size))
         }
 
-        if (is.matrix(output)) {
-          ytrain.pred <- data.frame(matrix(unlist(output[, 2]), ncol = B1))
-          fit.list <- output[, 1]
-        } else {
-          ytrain.pred <- data.frame(matrix(unlist(output[2]), ncol = B1))
-          fit.list <- output[1]
+        if (is.matrix(output)) {subspace <- output[, 3]}
+        else {subspace <- output[3]}
+
+        # Get the number of features in each model
+
+        s_num <- sapply(1:B1, function(i){length(subspace[[i]])})
+
+        # Get the frequency of each feature in B1 models served as the new dist
+
+        s <- rep(0, p)
+        for (i in 1:length(subspace)) {
+          s[subspace[[i]]] <- s[subspace[[i]]] + 1
         }
 
-        y_count <- matrix(nrow = n,ncol = nmulti)
-        for(i in 1:n){
-          for(j in 1:nmulti){
-            y_count[i,j] = sum(ytrain.pred[i,] == j)/B1
-          }
-        }
+        dist <- s/B1
+        dist[dist < C0/log(p)] <- C0/p
+        if(base == 'lda' | base == 'qda'){dist[delete.ind] <- 0}
 
-        # cv
-        if(nmulti <= 5){
-          cb_list <- lapply(1:nmulti,function(i){seq(0,0.9,0.1)})
-          cb <- Expand(cb_list)
-        }else{
-          n_thre <- round(10^5/nmulti)
-          cb <- matrix(runif(n_thre*nmulti),n_thre,nmulti)
-        }
-
-        cb <- as.matrix(cb)
-        error <- foreach(i = 1:dim(cb)[1],.combine = "rbind",.packages = "MASS") %dopar%{
-          alpha = cb[i,]
-          pre.ind <- sapply(1:n,function(k){as.numeric(which.max(y_count[k,]+alpha))})
-          mis <- sum(ytrain!=pre.ind)/n
-          return(list(alpha = alpha,pre.ind = pre.ind,mis = mis))
-        }
-
-        error <- as.matrix(error)
-        indc <-  which.min(as.numeric(error[,3]))
-        cutoff <- error[[indc,1]]
-        pre <- error[[indc,2]]
+        max_size <- sum(dist != 0)
+        Dmin <- round(max(1,quantile(s_num,.25)-1.5*IQR(s_num)))
+        D <- round(min(quantile(s_num,.75) + 1.5*IQR(s_num),
+                       max_size))
       }
 
-      # base classifier : tree
-
-      if (base == "tree"){
-
-        if (is.null(D)) {
-          D <- floor(min(sqrt(n), p))
-        }
-
-        dist <- rep(1, p)
-        Dmin <- 1
-        for (t in 1:(iteration + 1)) {
-          output <- foreach(i = 1:B1, .combine = "rbind", .packages = "MASS") %dopar% {
-            cat("i=",i," starts","\n")
-            S <- sapply(1:B2, function(j) {
-              S.size <- sample(Dmin:D, 1)
-              c(sample(1:p, size = min(S.size, length(dist[dist != 0])), prob = dist),
-                rep(NA, D - min(S.size, length(dist[dist !=0]))))
-            })
-
-            SRaSubset(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval, B2 = B2, S = S, base = base, k = k, kl.k = kl.k,
-                      criterion = criterion, cv = cv)
-          }
-
-
-
-          if (is.matrix(output)) {
-            subspace <- output[, 3]
-          } else {
-            subspace <- output[3]
-          }
-
-          # Get the number of features in each model
-
-          s_num <- sapply(1:B1, function(i){length(subspace[[i]])})
-
-          s <- rep(0, p)
-          for (i in 1:length(subspace)) {
-            s[subspace[[i]]] <- s[subspace[[i]]] + 1
-          }
-
-          dist <- s/B1
-          dist[dist < C0/log(p)] <- C0/p
-
-          max_size <- sum(dist != 0)
-          Dmin <- round(max(1,quantile(s_num,.25)-1.5*IQR(s_num)))
-          D <- round(min(quantile(s_num,.75) + 1.5*IQR(s_num),
-                         max_size))
-        }
-
-        if (is.matrix(output)) {
-          ytrain.pred <- data.frame(matrix(unlist(output[, 2]), ncol = B1))
-          fit.list <- output[, 1]
-        } else {
-          ytrain.pred <- data.frame(matrix(unlist(output[2]), ncol = B1))
-          fit.list <- output[1]
-        }
-
-        y_count <- matrix(nrow = n,ncol = nmulti)
-        for(i in 1:n){
-          for(j in 1:nmulti){
-            y_count[i,j] = sum(ytrain.pred[i,] == j)/B1
-          }
-        }
-
-        # cv
-        if(nmulti <= 5){
-          cb_list <- lapply(1:nmulti,function(i){seq(0,0.9,0.1)})
-          cb <- Expand(cb_list)
-        }else{
-          n_thre <- round(10^5/nmulti)
-          cb <- matrix(runif(n_thre*nmulti),n_thre,nmulti)
-        }
-
-        cb <- as.matrix(cb)
-        error <- foreach(i = 1:dim(cb)[1],.combine = "rbind",.packages = "MASS") %dopar%{
-          alpha = cb[i,]
-          pre.ind <- sapply(1:n,function(k){
-            as.numeric(which.max(y_count[k,]+alpha))})
-          mis <- sum(ytrain!=pre.ind)/n
-          return(list(alpha = alpha,pre.ind = pre.ind,mis = mis))
-        }
-
-        error <- as.matrix(error)
-        indc <-  which.min(as.numeric(error[,3]))
-        cutoff <- error[[indc,1]]
-        pre <- error[[indc,2]]
-
+      if (is.matrix(output)) {
+        ytrain.pred <- data.frame(matrix(unlist(output[, 2]), ncol = B1))
+        fit.list <- output[, 1]
+      } else {
+        ytrain.pred <- data.frame(matrix(unlist(output[2]), ncol = B1))
+        fit.list <- output[1]
       }
+
+      y_count <- matrix(nrow = n,ncol = nmulti)
+      for(i in 1:n){
+        for(j in 1:nmulti){
+          y_count[i,j] = sum(ytrain.pred[i,] == j)/B1
+        }
+      }
+
+      # cv
+      if(nmulti <= 5){
+        cb_list <- lapply(1:nmulti,function(i){seq(0,0.9,0.1)})
+        cb <- Expand(cb_list)
+      }else{
+        n_thre <- round(10^5/nmulti)
+        cb <- matrix(runif(n_thre*nmulti),n_thre,nmulti)
+      }
+
+      cb <- as.matrix(cb)
+      error <- foreach(i = 1:dim(cb)[1],.combine = "rbind",.packages = "MASS") %dopar%{
+        alpha = cb[i,]
+        pre.ind <- sapply(1:n,function(k){as.numeric(which.max(y_count[k,]+alpha))})
+        mis <- sum(ytrain!=pre.ind)/n
+        return(list(alpha = alpha,pre.ind = pre.ind,mis = mis))
+      }
+
+      error <- as.matrix(error)
+      indc <-  which.min(as.numeric(error[,3]))
+      cutoff <- error[[indc,1]]
+      pre <- error[[indc,2]]
+
     }
     else{ #super RaSE
       if(!is.null(D)){
@@ -1633,8 +1155,6 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
                         }
         )
 
-
-
         s <- matrix(rep(0, p*length(base)), ncol = p)
         colnames(s) <- 1:p
         rownames(s) <- base
@@ -1650,7 +1170,6 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
           base.dist[which(base.dist == 0)] <- C0*B1/2
         }
 
-
         dist <- s/base.count
         dist[dist < C0/log(p)] <- C0/p
         if (any(base.count == 0)) {
@@ -1663,12 +1182,10 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
           dist["qda", delete.ind.qda] <- 0
         }
 
-
         D <- rep(round(mean(D_seq,na.rm = TRUE)), length(base))
         names(D) <- base
         Dmin <- 1
         Dmax <- max(D)
-
       }
 
       if (is.matrix(output)) {
@@ -1709,15 +1226,11 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
       indc <-  which.min(as.numeric(error[,3]))
       cutoff <- error[[indc,1]]
       pre <- error[[indc,2]]
-
-
-
-
     }
 
     # output
     # -------------------------------
-    if (length(base) == 1) { # original RaSE
+    if (length(base) == 1) { # original mRaSE
       if (ranking == TRUE) {
         rk <- s/B1
       } else {
@@ -1738,7 +1251,7 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
                   iteration = iteration, fit.list = fit.list, cutoff = cutoff, subspace = subspace, ranking = rk, scale = scale.parameters)
       class(obj) <- "mRaSE"
     }
-    else  { # super RaSE
+    else  { # super mRaSE
       if (ranking == TRUE) {
         rk.feature <- s/base.count
       } else {
@@ -1770,7 +1283,5 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
     }
 
   }
-
-
   return(obj)
 }

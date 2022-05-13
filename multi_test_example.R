@@ -20,13 +20,13 @@ ytrain <- train.data$y
 xtest <- test.data$x
 ytest <- test.data$y
 
-xtrain[,1:15] <- xtrain[,3]
+#xtrain[,1:15] <- xtrain[,3]
 
 ts_tab <- Expand(list(base = base,criterion = criterion))
 
 ## knn bug
 
-i = 1
+i = 2
 
 fit_nocn <- RaSE(xtrain, ytrain, B1 = B1, B2 = B2,
                  iteration = 0,base = base[i])
@@ -100,3 +100,5 @@ class(fit_2)
 predict(fit_2,xtest)
 mean(predict(fit_2,xtest) != ytest)
 fit_2$ranking
+
+
