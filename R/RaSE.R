@@ -35,6 +35,9 @@
 #' @importFrom stats rt
 #' @importFrom stats runif
 #' @importFrom stats deviance
+#' @importFrom stats IQR
+#' @importFrom stats quantile
+#' @importFrom lava Expand
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 aes_string
@@ -141,8 +144,9 @@
 #' \item{ranking.base}{the selected percentage of each classifier type in the selected B1 learners.}
 #' \item{scale}{a list of scaling parameters, including the scaling center and the scale parameter for each feature. Equals to \code{NULL} when the data is not scaled in \code{RaSE} model fitting.}
 #' @author Ye Tian (maintainer, \email{ye.t@@columbia.edu}) and Yang Feng. The authors thank Yu Cao (Exeter Finance) and his team for many helpful suggestions and discussions.
-#' @seealso \code{\link{predict.RaSE}}, \code{\link{RaModel}}, \code{\link{print.RaSE}}, \code{\link{print.SRaSE}}, \code{\link{RaPlot}}, \code{\link{RaScreen}}.
-#' @references
+#' @seealso \code{\link{predict.RaSE}}, \code{\link{predict.SRaSE}}, \code{\link{print.RaSE}}, \code{\link{print.SRaSE}}, \code{\link{RaModel}}, \code{\link{RaPlot}}, \code{\link{RaScreen}},
+#' \code{\link{predict.mRaSE}},\code{\link{predict.SmRaSE}},\code{\link{print.mRaSE}},\code{\link{print.SmRaSE}}.
+#' @references,
 #' Tian, Y. and Feng, Y., 2021(a). RaSE: A variable screening framework via random subspace ensembles. Journal of the American Statistical Association, (just-accepted), pp.1-30.
 #'
 #' Tian, Y. and Feng, Y., 2021(b). RaSE: Random subspace ensemble classification. Journal of Machine Learning Research, 22(45), pp.1-93.
@@ -415,7 +419,7 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
           }
           c(snew, rep(NA, D - length(snew)))
         })
-        RaSubsetnew(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval, B2 = B2, S = S, base = base, k = k,
+        RaSubset(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval, B2 = B2, S = S, base = base, k = k,
                     criterion = criterion, cv = cv, mu0.mle = mu0.mle, mu1.mle = mu1.mle, Sigma0.mle = Sigma0.mle, Sigma1.mle = Sigma1.mle, kl.k = kl.k,
                     ...)
       }

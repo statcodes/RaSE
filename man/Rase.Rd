@@ -212,6 +212,7 @@ mean(predict(fit, xtest) != ytest)
 }
 }
 \references{
+,
 Tian, Y. and Feng, Y., 2021(a). RaSE: A variable screening framework via random subspace ensembles. Journal of the American Statistical Association, (just-accepted), pp.1-30.
 
 Tian, Y. and Feng, Y., 2021(b). RaSE: Random subspace ensemble classification. Journal of Machine Learning Research, 22(45), pp.1-93.
@@ -227,7 +228,8 @@ Akaike, H., 1973. Information theory and an extension of the maximum likelihood 
 Schwarz, G., 1978. Estimating the dimension of a model. The annals of statistics, 6(2), pp.461-464.
 }
 \seealso{
-\code{\link{predict.RaSE}}, \code{\link{RaModel}}, \code{\link{print.RaSE}}, \code{\link{print.SRaSE}}, \code{\link{RaPlot}}, \code{\link{RaScreen}}.
+\code{\link{predict.RaSE}}, \code{\link{predict.SRaSE}}, \code{\link{print.RaSE}}, \code{\link{print.SRaSE}}, \code{\link{RaModel}}, \code{\link{RaPlot}}, \code{\link{RaScreen}},
+\code{\link{predict.mRaSE}},\code{\link{predict.SmRaSE}},\code{\link{print.mRaSE}},\code{\link{print.SmRaSE}}.
 }
 \author{
 Ye Tian (maintainer, \email{ye.t@columbia.edu}) and Yang Feng. The authors thank Yu Cao (Exeter Finance) and his team for many helpful suggestions and discussions.

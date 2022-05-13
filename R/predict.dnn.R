@@ -2,6 +2,7 @@
 #'
 #' Predict a deep learning model.
 #' @export
+#' @importFrom keras %>%
 #' @importFrom keras to_categorical
 #' @importFrom keras keras_model_sequential
 #' @importFrom keras layer_dense
