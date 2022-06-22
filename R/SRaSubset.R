@@ -128,7 +128,7 @@ SRaSubset <- function(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval
 
         folds <- createFolds(ytrain, k = cv)
         subspace.list <- sapply(1:B2, function(i) {
-            set.seed(i)
+            #set.seed(i)
             #cat(i)
             # the last row is training error for each i in 1:B2
             Si <- S[, i][!is.na(S[, i])]  # current subspace
@@ -152,6 +152,8 @@ SRaSubset <- function(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval
 
         i0 <- which.min(subspace.list)
         S <- S[!is.na(S[, i0]), i0]  # final optimal subspace
+
+        cat("Length of S :",length(S),"\n")
 
         xtrain.r <- xtrain[, S, drop = F]
         fit <- lda(x = as.matrix(xtrain.r), grouping = ytrain)
@@ -229,7 +231,7 @@ SRaSubset <- function(xtrain = xtrain, ytrain = ytrain, xval = xval, yval = yval
             folds <- createFolds(ytrain, k = cv)
             subspace.list <- sapply(1:B2, function(i) {
                 cat(i,"\n")
-                set.seed(i)
+                #set.seed(i)
                 Si <- S[, i][!is.na(S[, i])]   # current subspace
                 xtrain.r <- xtrain[, Si, drop = F]
                 xtrain.r.df <- data.frame(xtrain.r)

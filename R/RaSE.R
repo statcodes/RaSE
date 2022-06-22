@@ -1090,7 +1090,7 @@ RaSE <- function(xtrain, ytrain, xval = NULL, yval = NULL, B1 = 200, B2 = 500, D
         output <- foreach(i = 1:B1, .combine = "rbind",
                           .packages = c("caret","MASS")) %dopar% {
                             cat("B1 =",i," times starts","\n")
-                            set.seed(i)
+                            #set.seed(i)
                             base.list <- sample(base, size = B2, prob = base.dist, replace = TRUE)
                             S <- sapply(1:B2, function(j) {
                               S.size <- sample(Dmin:D[base.list[j]], 1)
