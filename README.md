@@ -6,7 +6,7 @@ To install the package, please first install the devtools packages, and run the 
 
 ```
 library(devtools)
-install_github("statcodes/RaSE")
+install_github("yangfengstat/RaSE")
 ```
 
 # Multi RaSE
