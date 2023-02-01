@@ -326,7 +326,7 @@ RaModel <- function(model.type, model.no, n, p, p0 = 1/2, sparse = TRUE) {
                     colnames(X) <- paste0("v",1:p)
             }
             if (model.no == 3) {# knn
-                X0 <- mvrnorm(n = 20, mu = rep(0, p), Sigma = diag(p))
+                X0 <- mvrnorm(n = 20, mu = rep(0, p), Sigma = 0.25*diag(p))
                 Y0 <- rep(c(0, 1, 2, 3), each = 5)
                 if (sparse) {
                     Ds <- sapply(1:n, function(o) {
