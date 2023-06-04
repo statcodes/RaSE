@@ -24,12 +24,12 @@ ytest <- test.data$y
 ```
 ## Run mRaSE classifier with LDA base classifier and no iteration
 ```
-fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0, base = 'lda', cores = 1)
+fit <- RaSE(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 0, base = 'lda', cores = 1)
 mean(predict(fit, xtest) != ytest)
 ```
 ## Run mRaSE classifier with LDA base classifier and one iteration
 ```
-fit <- SmultiRase(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 1,
+fit <- RaSE(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 1,
 base = 'lda', cores = 6)
 mean(predict(fit, xtest) != ytest)
 ```
