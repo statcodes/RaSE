@@ -33,9 +33,9 @@ fit <- RaSE(xtrain, ytrain, B1 = 20, B2 = 50, iteration = 1, base = 'lda', cores
 mean(predict(fit, xtest) != ytest)
 ```
 
-# Super RaSE
+# Super Multi RaSE
 
-Fit a super RaSE classifier by sampling base learner from kNN, LDA and logistic regression with equal probability
+Fit a Super Multi RaSE classifier by sampling base learner from kNN, LDA and logistic regression with equal probability
 
 ```
 fit <- RaSE(xtrain, ytrain, B1 = 20, B2 = 50, base = c("knn", "lda", "logistic"), iteration = 1, cores = 6)
