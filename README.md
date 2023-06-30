@@ -1,4 +1,4 @@
-# RaSE
+# RaSEn
 R Package for Random Subspace Ensemble
 
 # Installation Instructions
@@ -6,7 +6,7 @@ To install the package, please first install the devtools packages, and run the 
 
 ```
 library(devtools)
-install_github("yangfengstat/RaSE")
+install_github("yangfengstat/RaSEn")
 ```
 
 # Multi RaSE
