@@ -23,7 +23,7 @@
 
 print.mRaSE <- function(x, ...) {
   cat("Type of base classifiers:", x$base, "\n")
-  cat("Criterion: 5-folds CV", "\n")
+  cat("Criterion: ",x$criterion, "\n")
   cat("number of class:",x$nmulti,"\n")
   cat("B1:", x$B1, "\n")
   cat("B2:", x$B2, "\n")

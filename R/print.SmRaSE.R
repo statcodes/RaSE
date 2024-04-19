@@ -22,9 +22,9 @@
 #' }
 
 print.SmRaSE <- function(x, ...) {
-  cat("Count of base classifier types among", x$B1, "classifiers:")
-  print(table(x$base))
-  cat("Criterion: 5folds-CV", "\n")
+  cat("Count of base classifier types among", x$B1, "classifiers: \n")
+  print(x$ranking$ranking.base * B1)
+  cat("Criterion: ",x$criterion, "\n")
   cat("B1:", x$B1, "\n")
   cat("B2:", x$B2, "\n")
   cat("number of class:",x$nmulti,"\n")
